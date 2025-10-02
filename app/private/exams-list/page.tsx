@@ -1,78 +1,151 @@
+'use client';
+
 import { Header } from '@/components/header';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table';
+import { Pagination } from '@heroui/pagination';
 import { Tooltip } from '@heroui/tooltip';
-import { useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
+import { ExamType } from '@/types/exam_types';
+import { examTypeIcon } from '@/utils/exam-type-icon';
+import { DateTime } from 'luxon';
+interface ColumnsProps {
+  name: string;
+  uid: string;
+  alignment?: 'center' | 'end' | 'start';
+}
 
-export const columns = [
-  { name: 'NAME', uid: 'name' },
-  { name: 'ACTIONS', uid: 'actions' },
+const columns: ColumnsProps[] = [
+  { name: 'Protocolo', uid: 'id' },
+  { name: 'Tipo do Exame', uid: 'exam_type' },
+  { name: 'Data', uid: 'date', alignment: 'center' },
+  { name: 'Espécie/Raça', uid: 'specie' },
+  { name: 'Nome do animal', uid: 'pet_name' },
+  { name: 'Proprietário', uid: 'owner' },
+  { name: 'Veterinário', uid: 'vet' },
+  { name: 'Ações', uid: 'actions', alignment: 'center' },
 ];
 
-export const users = [
+const examData = [
   {
-    id: 1,
-    name: 'Tony Reichert',
-    role: 'CEO',
-    team: 'Management',
-    status: 'active',
-    age: '29',
-    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026024d',
-    email: 'tony.reichert@example.com',
+    id: 'PR001',
+    exam_type: ExamType.hemograma,
+    date: '2024-09-15',
+    specie: 'Cão/Golden Retriever',
+    pet_name: 'Max',
+    owner: '2312 - Ana Silva',
+    vet: 'Dr. Carlos Mendes',
   },
   {
-    id: 2,
-    name: 'Zoey Lang',
-    role: 'Technical Lead',
-    team: 'Development',
-    status: 'paused',
-    age: '25',
-    avatar: 'https://i.pravatar.cc/150?u=a042581f4e29026704d',
-    email: 'zoey.lang@example.com',
+    id: 'PR005',
+    exam_type: ExamType.bioquimico,
+    date: '2024-09-19',
+    specie: 'Cão/Labrador',
+    pet_name: 'Buddy',
+    owner: '2312 - Ricardo Alves',
+    vet: 'Dr. Fernando Souza',
   },
   {
-    id: 3,
-    name: 'Jane Fisher',
-    role: 'Senior Developer',
-    team: 'Development',
-    status: 'active',
-    age: '22',
-    avatar: 'https://i.pravatar.cc/150?u=a04258114e29026702d',
-    email: 'jane.fisher@example.com',
+    id: 'PR006',
+    exam_type: ExamType.hemograma,
+    date: '2024-09-20',
+    specie: 'Cão/Bulldog Francês',
+    pet_name: 'Thor',
+    owner: '2312 - Camila Martins',
+    vet: 'Dra. Patrícia Campos',
   },
   {
-    id: 4,
-    name: 'William Howard',
-    role: 'Community Manager',
-    team: 'Marketing',
-    status: 'vacation',
-    age: '28',
-    avatar: 'https://i.pravatar.cc/150?u=a048581f4e29026701d',
-    email: 'william.howard@example.com',
+    id: 'PR007',
+    exam_type: ExamType.bioquimico,
+    date: '2024-09-21',
+    specie: 'Gato/Maine Coon',
+    pet_name: 'Garfield',
+    owner: '2312 - Lucas Pereira',
+    vet: 'Dr. Anderson Silva',
   },
   {
-    id: 5,
-    name: 'Kristen Copper',
-    role: 'Sales Manager',
-    team: 'Sales',
-    status: 'active',
-    age: '24',
-    avatar: 'https://i.pravatar.cc/150?u=a092581d4ef9026700d',
-    email: 'kristen.cooper@example.com',
+    id: 'PR008',
+    exam_type: ExamType.hemograma,
+    date: '2024-09-22',
+    specie: 'Cão/Beagle',
+    pet_name: 'Mel',
+    owner: '2312 - Fernanda Lima',
+    vet: 'Dra. Juliana Barbosa',
+  },
+  {
+    id: 'PR009',
+    exam_type: ExamType.hemograma,
+    date: '2024-09-23',
+    specie: 'Coelho/Angorá',
+    pet_name: 'Branquinho',
+    owner: '2312 - Guilherme Rocha',
+    vet: 'Dr. Marcos Dias',
+  },
+  {
+    id: 'PR010',
+    exam_type: ExamType.bioquimico,
+    date: '2024-09-24',
+    specie: 'Cão/Rottweiler',
+    pet_name: 'Duque',
+    owner: '2312 - Tatiana Moreira',
+    vet: 'Dra. Roberta Santos',
+  },
+  {
+    id: 'PR011',
+    exam_type: ExamType.coproparasitologico,
+    date: '2024-09-25',
+    specie: 'Gato/Ragdoll',
+    pet_name: 'Princesa',
+    owner: '2312 - André Carvalho',
+    vet: 'Dr. Paulo Mendes',
+  },
+  {
+    id: 'PR012',
+    exam_type: ExamType.hemograma,
+    date: '2024-09-26',
+    specie: 'Cão/Poodle',
+    pet_name: 'Bolt',
+    owner: '2312 - Silvia Nascimento',
+    vet: 'Dra. Carolina Vieira',
   },
 ];
 
 export default function ExamsList() {
+  const [page, setPage] = useState(1);
+
+  const [totalPages, setTotalPages] = useState(5);
+
   const renderCell = useCallback((user: { [x: string]: any }, columnKey: string | number) => {
     const cellValue = user[columnKey];
 
     switch (columnKey) {
-      case 'name':
+      case 'id':
+        return <p className='text-bold text-sm capitalize'>{cellValue}</p>;
+      case 'exam_type':
+        return (
+          <div className='flex items-center justify-start gap-2'>
+            <span className='text-lg'>{examTypeIcon(cellValue as unknown as ExamType)}</span>
+            <p className='text-bold text-sm capitalize'>{cellValue}</p>
+          </div>
+        );
+      case 'date':
+        return (
+          <p className='text-bold text-sm capitalize text-center'>
+            {DateTime.fromFormat(cellValue, 'yyyy-MM-dd').toFormat('dd/MM/yyyy')}
+          </p>
+        );
+      case 'specie':
+        return <p className='text-bold text-sm capitalize'>{cellValue}</p>;
+      case 'pet_name':
+        return <p className='text-bold text-sm capitalize'>{cellValue}</p>;
+      case 'owner':
+        return <p className='text-bold text-sm capitalize'>{cellValue}</p>;
+      case 'vet':
         return <p className='text-bold text-sm capitalize'>{cellValue}</p>;
 
       case 'actions':
         return (
-          <div className='relative flex items-center gap-2'>
+          <div className='relative flex items-center justify-center gap-6'>
             <Tooltip content='Details'>
               <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
                 <AiFillEye />
@@ -98,19 +171,40 @@ export default function ExamsList() {
   return (
     <>
       <Header />
-      <section className='container mx-auto max-w-7xl p-4'>
-        <Table aria-label='Example table with custom cells'>
+      <section className='p-4'>
+        <Table
+          aria-label='Exames'
+          isStriped
+          bottomContent={
+            <div className='flex w-full justify-center'>
+              <Pagination
+                isCompact
+                showControls
+                showShadow
+                color='secondary'
+                page={page}
+                total={totalPages}
+                onChange={(page: number) => setPage(page)}
+              />
+            </div>
+          }
+          classNames={{
+            wrapper: 'min-h-[222px]',
+          }}
+        >
           <TableHeader columns={columns}>
             {(column) => (
-              <TableColumn key={column.uid} align={column.uid === 'actions' ? 'center' : 'start'}>
+              <TableColumn key={column.uid} align={column.alignment || 'start'}>
                 {column.name}
               </TableColumn>
             )}
           </TableHeader>
-          <TableBody items={users}>
+          <TableBody items={examData}>
             {(item) => (
               <TableRow key={item.id}>
-                {(columnKey) => <TableCell>{renderCell(item, columnKey)}</TableCell>}
+                {(columnKey) => (
+                  <TableCell className='p-4'>{renderCell(item, columnKey)}</TableCell>
+                )}
               </TableRow>
             )}
           </TableBody>
