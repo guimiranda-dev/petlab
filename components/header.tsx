@@ -9,7 +9,7 @@ export function Header() {
   return (
     <div className='bg-white'>
       <div className='container mx-auto max-w-7xl flex justify-between items-center p-2'>
-        <Image src='/assets/logo.png' alt='logo' width={60} height={60} />
+        <Image src='/assets/logo.png' alt='logo' width={120} height={120} />
 
         <Dropdown>
           <DropdownTrigger>

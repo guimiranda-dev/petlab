@@ -1,14 +1,15 @@
 'use client';
 
-import { Header } from '@/components/header';
 import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from '@heroui/table';
 import { Pagination } from '@heroui/pagination';
-import { Tooltip } from '@heroui/tooltip';
-import { useCallback, useState } from 'react';
-import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
+import { useState } from 'react';
 import { ExamType } from '@/types/exam_types';
-import { examTypeIcon } from '@/utils/exam-type-icon';
-import { DateTime } from 'luxon';
+import { RowItem } from '@/components/Exams/row-item';
+import { Header } from '@/components/header';
+import { Button } from '@heroui/button';
+import { SearchExam } from '@/components/Exams/search';
+import { useRouter } from 'next/navigation';
+
 interface ColumnsProps {
   name: string;
   uid: string;
@@ -110,68 +111,22 @@ const examData = [
   },
 ];
 
-export default function ExamsList() {
+export default function Page() {
   const [page, setPage] = useState(1);
-
   const [totalPages, setTotalPages] = useState(5);
-
-  const renderCell = useCallback((user: { [x: string]: any }, columnKey: string | number) => {
-    const cellValue = user[columnKey];
-
-    switch (columnKey) {
-      case 'id':
-        return <p className='text-bold text-sm capitalize'>{cellValue}</p>;
-      case 'exam_type':
-        return (
-          <div className='flex items-center justify-start gap-2'>
-            <span className='text-lg'>{examTypeIcon(cellValue as unknown as ExamType)}</span>
-            <p className='text-bold text-sm capitalize'>{cellValue}</p>
-          </div>
-        );
-      case 'date':
-        return (
-          <p className='text-bold text-sm capitalize text-center'>
-            {DateTime.fromFormat(cellValue, 'yyyy-MM-dd').toFormat('dd/MM/yyyy')}
-          </p>
-        );
-      case 'specie':
-        return <p className='text-bold text-sm capitalize'>{cellValue}</p>;
-      case 'pet_name':
-        return <p className='text-bold text-sm capitalize'>{cellValue}</p>;
-      case 'owner':
-        return <p className='text-bold text-sm capitalize'>{cellValue}</p>;
-      case 'vet':
-        return <p className='text-bold text-sm capitalize'>{cellValue}</p>;
-
-      case 'actions':
-        return (
-          <div className='relative flex items-center justify-center gap-6'>
-            <Tooltip content='Details'>
-              <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
-                <AiFillEye />
-              </span>
-            </Tooltip>
-            <Tooltip content='Edit user'>
-              <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
-                <AiFillEdit />
-              </span>
-            </Tooltip>
-            <Tooltip color='danger' content='Delete user'>
-              <span className='text-lg text-danger cursor-pointer active:opacity-50'>
-                <AiFillDelete />
-              </span>
-            </Tooltip>
-          </div>
-        );
-      default:
-        return cellValue;
-    }
-  }, []);
+  const router = useRouter();
 
   return (
     <>
       <Header />
-      <section className='p-4'>
+      <section className='container mx-auto max-w-7xl p-6 bg-white my-4 rounded-md'>
+        <h1 className='text-3xl text-slate-800 mb-0 font-bold'>Exames</h1>
+        <div className='flex items-center justify-between my-4'>
+          <SearchExam onSearch={(value) => console.log(value)} />
+          <Button color='primary' onPress={() => router.push('/exam-form')}>
+            Criar novo exame
+          </Button>
+        </div>
         <Table
           aria-label='Exames'
           isStriped
@@ -203,7 +158,9 @@ export default function ExamsList() {
             {(item) => (
               <TableRow key={item.id}>
                 {(columnKey) => (
-                  <TableCell className='p-4'>{renderCell(item, columnKey)}</TableCell>
+                  <TableCell className='p-4'>
+                    <RowItem user={item} columnKey={columnKey} />
+                  </TableCell>
                 )}
               </TableRow>
             )}

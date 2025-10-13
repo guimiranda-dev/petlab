@@ -12,7 +12,7 @@ async function getExams() {
   return { data };
 }
 
-export function getExamsQueryHook() {
+export function useExamsQueryHook() {
   return useQuery({
     queryKey: ['exams'],
     queryFn: getExams,
