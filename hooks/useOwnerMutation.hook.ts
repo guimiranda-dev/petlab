@@ -6,10 +6,10 @@ interface Props {
   onSuccess: () => void;
 }
 
-const saveOwner = async ({ name }: { name: string }) => {
+const saveOwner = async (props: { name: string; external_id?: string }) => {
   const supabase = createClient();
 
-  const { error: userError } = await supabase.from('owner').insert({ name });
+  const { error: userError } = await supabase.from('owner').insert(props);
 
   if (userError) {
     throw new Error(userError.message);

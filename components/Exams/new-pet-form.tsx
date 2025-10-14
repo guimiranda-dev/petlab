@@ -18,6 +18,7 @@ const initialValues: Partial<PetType> = {
   specie: '',
   gender: '',
   birth_date: '',
+  external_id: '',
 };
 
 interface Props {
@@ -141,7 +142,7 @@ export function NewPetForm({ onClose, owner_id }: Props) {
             </div>
 
             {/* Grid com 2 colunas para Gênero e Data de Nascimento */}
-            <div className='mb-4 grid grid-cols-1 gap-4 md:grid-cols-2'>
+            <div className='mb-4 grid grid-cols-1 gap-4 md:grid-cols-3'>
               <Select
                 label='Gênero'
                 placeholder='Selecione o gênero'
@@ -167,6 +168,16 @@ export function NewPetForm({ onClose, owner_id }: Props) {
                 isInvalid={touched.birth_date && !!errors.birth_date}
                 value={values.birth_date}
                 isRequired
+              />
+
+              <Input
+                fullWidth
+                label='Código externo (Opcional)'
+                onChange={(e) => setFieldValue('external_id', e.target.value)}
+                errorMessage={touched.external_id && errors.external_id ? errors.external_id : ''}
+                isInvalid={touched.external_id && !!errors.external_id}
+                value={values.external_id}
+                placeholder='Ex: 123456'
               />
             </div>
           </div>

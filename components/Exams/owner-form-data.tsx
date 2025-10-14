@@ -91,7 +91,7 @@ export function OwnerFormData({ setFieldValue, touched, values, errors }: Props)
             defaultItems={
               data?.data?.map((i) => ({
                 key: String(i.id),
-                label: `${i.name}`,
+                label: `${i.external_id ? `${i.external_id} - ` : ''} ${i.name}`,
               })) || []
             }
             onSelectionChange={onSelectionChange}
@@ -119,7 +119,7 @@ export function OwnerFormData({ setFieldValue, touched, values, errors }: Props)
           isBlock
           color='primary'
           href='#'
-          className='py-2'
+          className='py-2 mt-2'
           onPress={() => setNewOwnerFormShow(true)}
         >
           <AiOutlinePlusCircle className='mr-2' />

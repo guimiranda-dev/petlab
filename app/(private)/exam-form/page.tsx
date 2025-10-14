@@ -11,17 +11,13 @@ import { OwnerFormData } from '@/components/Exams/owner-form-data';
 import { useFormik } from 'formik';
 import { examValidationSchema } from '@/schemas/exam-validation.schema';
 import { PetFormData } from '@/components/Exams/pet-form-data';
+import { Button } from '@heroui/button';
+import { useVetQuery } from '@/hooks/useVetQuery.hook';
 
 const exams = [
   { key: 'Creatinina', label: 'Creatinina' },
   { key: 'Glóbulos Vermelhos', label: 'Glóbulos Vermelhos' },
   { key: 'Glóbulos Brancos', label: 'Glóbulos Brancos' },
-];
-
-const animals = [
-  { key: 'Banguela', label: 'Banguela' },
-  { key: 'Goose', label: 'Goose' },
-  { key: 'Oliver', label: 'Oliver' },
 ];
 
 const initialValues = {
@@ -32,9 +28,11 @@ const initialValues = {
 };
 
 export default function Page() {
+  const { data, isFetching } = useVetQuery();
+
   const submit = () => {};
 
-  const { values, setFieldValue, handleSubmit, errors, touched } = useFormik({
+  const { values, setFieldValue, handleSubmit, errors, touched, setFieldTouched } = useFormik({
     initialValues,
     enableReinitialize: true,
     onSubmit: submit,
@@ -57,6 +55,34 @@ export default function Page() {
           </div>
 
           <div className='flex items-center justify-center gap-2'>
+            <Input
+              fullWidth
+              type='date'
+              label='Data do exame'
+              onChange={(e) => setFieldValue('date', e.target.value)}
+              onBlur={() => setFieldTouched('date', true)}
+              errorMessage={touched.date && errors.date ? errors.date : ''}
+              isInvalid={touched.date && !!errors.date}
+              value={values.date}
+              isRequired
+            />
+            <Select
+              label='Veterinário'
+              placeholder='Selecione o veterinário'
+              selectedKeys={values.vet_id ? [values.vet_id] : []}
+              onChange={(e) => setFieldValue('vet_id', e.target.value)}
+              onBlur={() => setFieldTouched('vet_id', true)}
+              errorMessage={touched.vet_id && errors.vet_id ? errors.vet_id : ''}
+              isInvalid={touched.vet_id && !!errors.vet_id}
+              isRequired
+              items={data?.data || []}
+              isLoading={isFetching}
+            >
+              {(option) => <SelectItem key={option.id}>{option.name}</SelectItem>}
+            </Select>
+          </div>
+
+          <div className='flex items-center justify-center gap-2'>
             <OwnerFormData
               errors={errors}
               setFieldValue={setFieldValue}
@@ -72,7 +98,7 @@ export default function Page() {
             />
           </div>
 
-          <Divider className='my-4' />
+          <Divider className='my-1' />
 
           <div className='flex items-center justify-center gap-2'>
             <Select className='max-w-xs' label='Tipo do exame' placeholder='Selecione uma opção'>
@@ -96,6 +122,10 @@ export default function Page() {
               Adicionar exame
             </Link>
           </div>
+
+          <Button type='button' color='primary' onPress={() => handleSubmit()}>
+            Salvar exame
+          </Button>
         </div>
 
         <div className='p-4 w-full'>

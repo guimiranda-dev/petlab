@@ -49,7 +49,7 @@ export function PetFormData({ setFieldValue, touched, values, errors }: Props) {
           isBlock
           color='primary'
           href='#'
-          className='py-2'
+          className='py-2 mt-2'
           onPress={() => {
             if (values.owner_id) {
               setNewPetFormShow(true);

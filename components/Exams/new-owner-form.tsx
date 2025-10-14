@@ -12,10 +12,12 @@ import { useOwnerMutation } from '@/hooks/useOwnerMutation.hook';
 
 interface InitialValuesProps {
   name: string;
+  external_id: string;
 }
 
 const initialValues: InitialValuesProps = {
   name: '',
+  external_id: '',
 };
 
 interface Props {
@@ -90,6 +92,18 @@ export function NewOwnerForm({ onClose }: Props) {
                 isInvalid={touched.name && !!errors.name}
                 value={values.name}
                 placeholder='Ex: João da Silva'
+              />
+            </div>
+
+            <div className='mb-6 grid grid-cols-1 md:grid-cols-2 gap-4'>
+              <Input
+                fullWidth
+                label='Código externo (Opcional)'
+                onChange={(e) => setFieldValue('external_id', e.target.value)}
+                errorMessage={touched.external_id && errors.external_id ? errors.external_id : ''}
+                isInvalid={touched.external_id && !!errors.external_id}
+                value={values.external_id}
+                placeholder='Ex: 123456'
               />
             </div>
           </div>
