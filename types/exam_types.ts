@@ -1,6 +1,7 @@
 export enum ExamType {
   hemograma = 'Hemograma',
-  coproparasitologico = 'Coproparasitológico',
   bioquimico = 'Bioquímico',
+  reticulocitos = 'Contagem de reticulócitos',
+  coproparasitologico = 'Coproparasitológico',
   urinalise = 'Urinálise',
 }

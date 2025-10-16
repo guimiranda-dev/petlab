@@ -38,7 +38,7 @@ export function PetFormData({ setFieldValue, touched, values, errors }: Props) {
             {data
               ? data?.data.map((option) => (
                   <SelectItem key={option.id}>
-                    {`${option.external_id} - ${option.name} - ${option.specie}/${option.breed}`}
+                    {`${option.external_id ? `#${option.external_id} - ` : ''} ${option.name} - ${option.specie}/${option.breed}`}
                   </SelectItem>
                 ))
               : null}

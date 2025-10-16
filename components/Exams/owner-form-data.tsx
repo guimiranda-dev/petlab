@@ -38,7 +38,7 @@ export function OwnerFormData({ setFieldValue, touched, values, errors }: Props)
   );
 
   const { data, isFetching } = useOwnersQuery({
-    limit: 100,
+    limit: 20,
     currentPage: 1,
     keyword: String(filterValue),
   });
@@ -48,8 +48,14 @@ export function OwnerFormData({ setFieldValue, touched, values, errors }: Props)
       const selected = data.data.find((i) => i.id === e);
       if (selected) {
         setFieldValue('owner_id', String(selected.id));
+      } else {
+        setFieldValue('owner_id', '');
       }
+    } else {
+      setFieldValue('owner_id', '');
     }
+
+    setFieldValue('pet_id', '');
   };
 
   useEffect(() => {

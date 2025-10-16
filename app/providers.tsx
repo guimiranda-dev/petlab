@@ -21,7 +21,14 @@ declare module '@react-types/shared' {
   }
 }
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      refetchOnWindowFocus: false,
+      retry: false,
+    },
+  },
+});
 
 export function Providers({ children, themeProps }: ProvidersProps) {
   const router = useRouter();

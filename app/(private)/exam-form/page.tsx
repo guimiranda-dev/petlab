@@ -13,18 +13,30 @@ import { examValidationSchema } from '@/schemas/exam-validation.schema';
 import { PetFormData } from '@/components/Exams/pet-form-data';
 import { Button } from '@heroui/button';
 import { useVetQuery } from '@/hooks/useVetQuery.hook';
+import { ExamFormData } from '@/components/Exams/exam-form-data';
+import { ExamType } from '@/types/exam_types';
+import { ExamTypeFormData } from '@/components/Exams/exam-type-form-data';
 
-const exams = [
-  { key: 'Creatinina', label: 'Creatinina' },
-  { key: 'Glóbulos Vermelhos', label: 'Glóbulos Vermelhos' },
-  { key: 'Glóbulos Brancos', label: 'Glóbulos Brancos' },
-];
+interface IInitialValues {
+  vet_id: string;
+  pet_id: string;
+  date: string;
+  owner_id: string;
+  exams: {
+    type: ExamType | null;
+  }[];
+}
 
-const initialValues = {
+const initialValues: IInitialValues = {
   vet_id: '',
   pet_id: '',
   date: '',
   owner_id: '',
+  exams: [
+    {
+      type: null,
+    },
+  ],
 };
 
 export default function Page() {
@@ -43,7 +55,7 @@ export default function Page() {
   return (
     <>
       <Header />
-      <section className='container mx-auto max-w-7xl grid grid-cols-1 md:grid-cols-2 p-6 my-4 gap-6 bg-white rounded-md'>
+      <section className='container mx-auto max-w-[1800px] grid grid-cols-1 md:grid-cols-2 p-6 my-4 gap-6 bg-white rounded-md'>
         <div className='flex flex-col gap-4'>
           <div className='mb-6'>
             <h1 className='text-3xl text-slate-800 mb-0 font-bold'>
@@ -100,28 +112,12 @@ export default function Page() {
 
           <Divider className='my-1' />
 
-          <div className='flex items-center justify-center gap-2'>
-            <Select className='max-w-xs' label='Tipo do exame' placeholder='Selecione uma opção'>
-              {exams.map((item) => (
-                <SelectItem key={item.key}>{item.label}</SelectItem>
-              ))}
-            </Select>
-            <Input label='Valor do exame' placeholder='Digite aqui' />
-            <Input label='Valor de referência' placeholder='Digite aqui' />
-
-            <div>
-              <Link isBlock color='danger' href='#'>
-                <AiOutlineMinusCircle className='text-danger-500' />
-              </Link>
-            </div>
-          </div>
-
-          <div>
-            <Link isBlock color='primary' href='#'>
-              <AiOutlinePlusCircle className='mr-2' />
-              Adicionar exame
-            </Link>
-          </div>
+          <ExamTypeFormData
+            errors={errors}
+            setFieldValue={setFieldValue}
+            touched={touched}
+            values={values}
+          />
 
           <Button type='button' color='primary' onPress={() => handleSubmit()}>
             Salvar exame
