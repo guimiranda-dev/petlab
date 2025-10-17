@@ -65,7 +65,7 @@ export function NewPetForm({ onClose, owner_id }: Props) {
         owner_id,
       });
     } catch (error) {
-      console.log('Erro: ', error);
+      console.error('Erro: ', error);
     }
   }
 

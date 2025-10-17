@@ -92,8 +92,8 @@ export function OwnerFormData({ setFieldValue, touched, values, errors }: Props)
           <Autocomplete
             ref={autocompleteRef}
             placeholder='Selecione uma opção'
-            isInvalid={touched.owner && !!errors.owner}
-            errorMessage={touched.owner && errors.owner ? errors.owner : ''}
+            isInvalid={touched.owner_id && !!errors.owner_id}
+            errorMessage={touched.owner_id && errors.owner_id ? errors.owner_id : ''}
             defaultItems={
               data?.data?.map((i) => ({
                 key: String(i.id),

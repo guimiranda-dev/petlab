@@ -52,7 +52,7 @@ export function NewOwnerForm({ onClose }: Props) {
         ...formData,
       });
     } catch (error) {
-      console.log('Erro: ', error);
+      console.error('Erro: ', error);
     }
   }
 

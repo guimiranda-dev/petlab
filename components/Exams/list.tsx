@@ -4,7 +4,7 @@ import { Table, TableBody, TableCell, TableColumn, TableHeader, TableRow } from 
 import { Pagination } from '@heroui/pagination';
 import { useState } from 'react';
 import { ExamType } from '@/types/exam_types';
-import { RowItem } from './row-item';
+import { RowItem } from '../ExamList/row-item';
 
 interface Props {
   amount: number;

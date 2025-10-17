@@ -1,3 +1,4 @@
+import { useEffect, useMemo } from 'react';
 import { useExamsReferenceValuesQuery } from '@/hooks/useExamsReferenceValuesQuery.hook';
 import { ExamReferenceValues } from '@/types/exam_reference_values';
 import { ExamSubgroup } from '@/types/exam_subgroup';
@@ -6,12 +7,14 @@ import { Input } from '@heroui/input';
 
 interface Props {
   examType: ExamType;
+  setFieldValue: (field: string, value: any) => void;
+  values: { [key: string]: any };
 }
 
 function groupBySubgroup(data: ExamReferenceValues[]) {
   const grouped = data.reduce(
     (acc, item) => {
-      const subgroupName = item.exam_subgroup; // ou item.exam_subgroup dependendo da estrutura
+      const subgroupName = item.exam_subgroup;
 
       if (!acc[subgroupName]) {
         acc[subgroupName] = [];
@@ -26,18 +29,49 @@ function groupBySubgroup(data: ExamReferenceValues[]) {
   return grouped;
 }
 
-export function ExamFormData({ examType }: Props) {
+export function ExamFormData({ examType, setFieldValue, values }: Props) {
   const { data, isFetching } = useExamsReferenceValuesQuery(examType);
 
+  const groupedData = useMemo(() => {
+    if (!data?.data) return {};
+    return groupBySubgroup(data.data);
+  }, [data?.data]);
+
+  useEffect(() => {
+    if (!data?.data) return;
+
+    let key = '';
+
+    let isAdult = false;
+    if (values?.pet?.birth_date) {
+      const birthDate = new Date(values?.pet?.birth_date);
+      const today = new Date();
+      const ageInMilliseconds = today.getTime() - birthDate.getTime();
+      const ageInDays = ageInMilliseconds / (1000 * 60 * 60 * 24);
+      isAdult = ageInDays >= 90;
+    }
+
+    key = `${isAdult ? 'adult' : 'puppy'}_`;
+
+    if (values?.pet?.specie === 'Canino') {
+      key += 'dog_';
+    } else {
+      key += 'cat_';
+    }
+
+    key += 'reference';
+
+    Object.entries(groupedData).forEach(([_, exams]) => {
+      exams.forEach((exam) => {
+        const value = (exam[key as keyof ExamReferenceValues] as string) || 'N/A';
+
+        setFieldValue(`exams.values.${exam.id}.reference_value`, value);
+        setFieldValue(`exams.values.${exam.id}.exam_reference_id`, exam.id);
+      });
+    });
+  }, [data?.data, values.pet]);
+
   if (!data?.data || isFetching) return null;
-
-  const groupedData = groupBySubgroup(data.data);
-
-  // Função para determinar qual valor de referência usar
-  const getReferenceValue = (exam: ExamReferenceValues, animalType: string, ageGroup: string) => {
-    const key = `${ageGroup}_${animalType}_reference` as keyof ExamReferenceValues;
-    return (exam[key] as string) || 'N/A';
-  };
 
   return (
     <div className='mt-4'>
@@ -48,7 +82,7 @@ export function ExamFormData({ examType }: Props) {
           </span>
 
           <div className='flex flex-col gap-2'>
-            {exams.map((exam) => (
+            {exams.map((exam, idx) => (
               <div key={exam.id}>
                 <div className='flex items-center justify-center gap-2'>
                   <Input
@@ -57,13 +91,16 @@ export function ExamFormData({ examType }: Props) {
                     }}
                     label={exam.name}
                     placeholder='Digite aqui'
+                    onChange={(e) => {
+                      setFieldValue(`exams.values.${exam.id}.value`, Number(e.target.value));
+                    }}
                   />
                   <Input
                     label='Valor de referência'
                     placeholder='Digite aqui'
                     disabled
                     readOnly
-                    value={getReferenceValue(exam, 'dog', 'adult')}
+                    value={values?.exams?.values?.[exam.id]?.reference_value || 'N/A'}
                   />
                 </div>
               </div>

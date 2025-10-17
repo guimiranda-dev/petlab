@@ -7,7 +7,7 @@ import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { NewPetForm } from './new-pet-form';
 
 interface Props {
-  setFieldValue: (field: string, value: string) => void;
+  setFieldValue: (field: string, value: any) => void;
   touched: { [key: string]: any };
   values: { [key: string]: any };
   errors: { [key: string]: any };
@@ -20,6 +20,17 @@ export function PetFormData({ setFieldValue, touched, values, errors }: Props) {
     owner_id: values.owner_id,
   });
 
+  const handleSelect = (value: string) => {
+    setFieldValue('pet_id', value);
+
+    const selected = data?.data.find((i) => String(i.id) === String(value));
+    if (selected) {
+      setFieldValue('pet', selected);
+    } else {
+      setFieldValue('pet', null);
+    }
+  };
+
   return (
     <>
       <div className='w-full'>
@@ -30,7 +41,7 @@ export function PetFormData({ setFieldValue, touched, values, errors }: Props) {
             label='Pet'
             placeholder='Selecione uma opção'
             selectedKeys={values.pet_id ? [values.pet_id] : []}
-            onChange={(e) => setFieldValue('pet_id', e.target.value)}
+            onChange={(e) => handleSelect(e.target.value)}
             errorMessage={touched.pet_id && errors.pet_id ? errors.pet_id : ''}
             isInvalid={touched.pet_id && !!errors.pet_id}
             isRequired

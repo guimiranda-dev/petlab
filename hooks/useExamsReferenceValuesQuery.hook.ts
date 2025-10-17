@@ -10,8 +10,6 @@ interface ResponseData {
 async function getExamReferenceValues(examType: ExamType): Promise<ResponseData> {
   const supabase = createClient();
 
-  console.log('Tentou vir aqui....');
-
   const { data, error } = await supabase
     .from('exam_reference_values')
     .select('*')

@@ -3,8 +3,6 @@
 import { Input } from '@heroui/input';
 import { Card, CardBody } from '@heroui/card';
 import { Divider } from '@heroui/divider';
-import { Link } from '@heroui/link';
-import { AiOutlineMinusCircle, AiOutlinePlusCircle } from 'react-icons/ai';
 import { Select, SelectItem } from '@heroui/select';
 import { Header } from '@/components/header';
 import { OwnerFormData } from '@/components/Exams/owner-form-data';
@@ -13,36 +11,91 @@ import { examValidationSchema } from '@/schemas/exam-validation.schema';
 import { PetFormData } from '@/components/Exams/pet-form-data';
 import { Button } from '@heroui/button';
 import { useVetQuery } from '@/hooks/useVetQuery.hook';
-import { ExamFormData } from '@/components/Exams/exam-form-data';
 import { ExamType } from '@/types/exam_types';
 import { ExamTypeFormData } from '@/components/Exams/exam-type-form-data';
+import { addToast } from '@heroui/toast';
+import { FaCircleCheck, FaSpinner } from 'react-icons/fa6';
+import { MdError } from 'react-icons/md';
+import { ExamValuesRequest, useExamMutation } from '@/hooks/useExamMutation.hook';
+import { useRouter } from 'next/navigation';
+import { PetType } from '@/types/pet';
 
 interface IInitialValues {
   vet_id: string;
   pet_id: string;
+  pet: PetType | null;
   date: string;
   owner_id: string;
   exams: {
     type: ExamType | null;
-  }[];
+    values: {
+      exam_reference_id: number;
+      reference_value: string;
+      value: number;
+    }[];
+  };
 }
 
 const initialValues: IInitialValues = {
+  pet: null,
   vet_id: '',
   pet_id: '',
   date: '',
   owner_id: '',
-  exams: [
-    {
-      type: null,
-    },
-  ],
+  exams: {
+    type: null,
+    values: [],
+  },
 };
 
 export default function Page() {
   const { data, isFetching } = useVetQuery();
+  const router = useRouter();
 
-  const submit = () => {};
+  const onSuccess = () => {
+    router.replace('/exams-list');
+
+    addToast({
+      icon: <FaCircleCheck className='text-success' />,
+      description: 'Exame criado com sucesso!',
+    });
+  };
+
+  const onError = (e: Error) => {
+    console.error(e);
+    addToast({
+      icon: <MdError className='text-white' />,
+      description: 'Erro ao criar o exame!',
+      color: 'danger',
+    });
+  };
+
+  const { mutate, isPending } = useExamMutation({ onSuccess, onError });
+
+  const submit = (v: IInitialValues) => {
+    const examValues: ExamValuesRequest[] = [];
+    v.exams.values.map((i) => {
+      if (i && i.value) {
+        // Valores vazios não serão salvos
+        examValues.push({
+          exam_id: 0,
+          exam_reference_id: i.exam_reference_id,
+          reference_value: i.reference_value,
+          value: i.value,
+        });
+      }
+    });
+
+    mutate({
+      exam: {
+        date: v.date,
+        pet_id: v.pet_id,
+        vet_id: v.vet_id,
+        exam_type: v.exams.type,
+      },
+      examValues: examValues,
+    });
+  };
 
   const { values, setFieldValue, handleSubmit, errors, touched, setFieldTouched } = useFormik({
     initialValues,
@@ -112,16 +165,24 @@ export default function Page() {
 
           <Divider className='my-1' />
 
-          <ExamTypeFormData
-            errors={errors}
-            setFieldValue={setFieldValue}
-            touched={touched}
-            values={values}
-          />
+          {values.pet && (
+            <ExamTypeFormData
+              errors={errors}
+              setFieldValue={setFieldValue}
+              touched={touched}
+              values={values}
+            />
+          )}
 
-          <Button type='button' color='primary' onPress={() => handleSubmit()}>
-            Salvar exame
-          </Button>
+          {isPending ? (
+            <div className='flex w-full items-center justify-center'>
+              <FaSpinner className='animate-spin text-foreground-500' />
+            </div>
+          ) : (
+            <Button type='button' color='primary' onPress={() => handleSubmit()}>
+              Salvar exame
+            </Button>
+          )}
         </div>
 
         <div className='p-4 w-full'>
