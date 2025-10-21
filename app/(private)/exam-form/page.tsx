@@ -1,7 +1,6 @@
 'use client';
 
 import { Input } from '@heroui/input';
-import { Card, CardBody } from '@heroui/card';
 import { Divider } from '@heroui/divider';
 import { Select, SelectItem } from '@heroui/select';
 import { Header } from '@/components/header';
@@ -17,11 +16,10 @@ import { FaCircleCheck, FaSpinner } from 'react-icons/fa6';
 import { MdError } from 'react-icons/md';
 import { ExamValuesRequest, useExamMutation } from '@/hooks/useExamMutation.hook';
 import { useRouter } from 'next/navigation';
-import PDFFile from '@/utils/pdfFile';
-import { Document, PDFViewer, usePDF } from '@react-pdf/renderer';
 import { ExamFormProps } from '@/types/exam';
-import { useEffect, useState } from 'react';
-import { Spinner } from '@heroui/spinner';
+import { ExamPreviewBioquimico } from '@/components/Exams/exam-preview-bioquimico';
+import { ExamType } from '@/types/exam_types';
+import { ExamPreviewHemograma } from '@/components/Exams/exam-preview-hemograma';
 
 const initialValues: ExamFormProps = {
   pet: null,
@@ -92,23 +90,6 @@ export default function Page() {
     validationSchema: examValidationSchema,
     validateOnBlur: true,
   });
-
-  const [debouncedValues, setDebouncedValues] = useState(values);
-  const [instance, updateInstance] = usePDF({
-    document: <PDFFile values={debouncedValues} />,
-  });
-
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedValues(values);
-    }, 500); // Aguarda 500ms após última mudança
-
-    return () => clearTimeout(timer);
-  }, [values]);
-
-  useEffect(() => {
-    updateInstance(<PDFFile values={debouncedValues} />);
-  }, [debouncedValues]);
 
   return (
     <>
@@ -190,20 +171,8 @@ export default function Page() {
           )}
         </div>
 
-        <div className='p-4 w-full'>
-          {instance.loading && (
-            <div className='w-full h-full flex items-center justify-center bg-slate-100 absolute z-50 top-0'>
-              <Spinner size='lg' />
-            </div>
-          )}
-          {instance.url && !instance.loading && (
-            <embed
-              src={instance.url ? `${instance.url}#toolbar=0&navpanes=0&scrollbar=0` : ''}
-              width='100%'
-              height='100%'
-            />
-          )}
-        </div>
+        {values.exams.type === ExamType.bioquimico && <ExamPreviewBioquimico values={values} />}
+        {values.exams.type === ExamType.hemograma && <ExamPreviewHemograma values={values} />}
       </section>
     </>
   );

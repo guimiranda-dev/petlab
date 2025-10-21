@@ -1,10 +1,10 @@
 import { Select, SelectItem } from '@heroui/select';
 import { ExamFormData } from './exam-form-data';
-import { ExamType } from '@/types/exam_types';
+import { ExamType, ExamTypeMap } from '@/types/exam_types';
 
-const exams: { key: ExamType; label: string }[] = Object.entries(ExamType).map(([key, value]) => ({
+const exams = Object.entries(ExamTypeMap).map(([key, value]) => ({
   key: key as ExamType,
-  label: value,
+  label: value.label,
 }));
 
 interface Props {

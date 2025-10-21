@@ -40,37 +40,59 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
   useEffect(() => {
     if (!data?.data) return;
 
-    let key = '';
+    let key_reference = '';
+    let key_relative = '';
 
     let isAdult = false;
-    if (values?.pet?.birth_date) {
+
+    if (values?.pet?.specie === 'Felino') {
+      // Felinos não tem exames adultos/filhotes
+      key_reference += 'cat_';
+      key_relative += 'cat_';
+    } else if (values?.pet?.birth_date && values?.pet?.specie === 'Canino') {
+      // Caninos tem exames adultos/filhotes
       const birthDate = new Date(values?.pet?.birth_date);
       const today = new Date();
       const ageInMilliseconds = today.getTime() - birthDate.getTime();
       const ageInDays = ageInMilliseconds / (1000 * 60 * 60 * 24);
       isAdult = ageInDays >= 90;
+      key_reference = `${isAdult ? 'adult' : 'puppy'}_dog_`;
+      key_relative = `${isAdult ? 'adult' : 'puppy'}_dog_`;
     }
 
-    key = `${isAdult ? 'adult' : 'puppy'}_`;
-
-    if (values?.pet?.specie === 'Canino') {
-      key += 'dog_';
-    } else {
-      key += 'cat_';
-    }
-
-    key += 'reference';
+    key_reference += 'reference';
+    key_relative += 'reference_relative';
 
     Object.entries(groupedData).forEach(([_, exams]) => {
       exams.forEach((exam) => {
-        const value = (exam[key as keyof ExamReferenceValues] as string) || 'N/A';
+        const value = (exam[key_reference as keyof ExamReferenceValues] as string) || null;
+        const valueRelative = (exam[key_relative as keyof ExamReferenceValues] as string) || null;
 
-        setFieldValue(`exams.values.${exam.id}.reference_value`, value);
+        setFieldValue(`exams.values.${exam.id}.reference_value`, value || null);
+        setFieldValue(`exams.values.${exam.id}.reference_relative_value`, valueRelative || null);
+        setFieldValue(`exams.values.${exam.id}.unit`, exam.unit);
         setFieldValue(`exams.values.${exam.id}.exam_reference_id`, exam.id);
         setFieldValue(`exams.values.${exam.id}.name`, exam.name);
+        setFieldValue(`exams.values.${exam.id}.exam_subgroup`, exam.exam_subgroup);
       });
     });
   }, [data?.data, values.pet]);
+
+  const handleReferenceValue = (examId: number) => {
+    const absoluteValue = values?.exams?.values?.[examId]?.reference_value;
+    const relativeValue = values?.exams?.values?.[examId]?.reference_relative_value;
+    const unit = values?.exams?.values?.[examId]?.unit;
+
+    if (absoluteValue === null && relativeValue === null) {
+      return 'N/A';
+    }
+
+    if (relativeValue !== null) {
+      return `${relativeValue} % | ${absoluteValue} ${unit}`;
+    }
+
+    return `${absoluteValue} ${unit}`;
+  };
 
   if (!data?.data || isFetching) return null;
 
@@ -83,27 +105,58 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
           </span>
 
           <div className='flex flex-col gap-2'>
-            {exams.map((exam, idx) => (
+            {exams.map((exam) => (
               <div key={exam.id}>
-                <div className='flex items-center justify-center gap-2'>
-                  <Input
-                    classNames={{
-                      label: 'font-bold !text-secondary-500',
-                    }}
-                    label={exam.name}
-                    placeholder='Digite aqui'
-                    onChange={(e) => {
-                      setFieldValue(`exams.values.${exam.id}.value`, Number(e.target.value));
-                    }}
-                    type='number'
-                  />
-                  <Input
-                    label='Valor de referência'
-                    placeholder='Digite aqui'
-                    disabled
-                    readOnly
-                    value={values?.exams?.values?.[exam.id]?.reference_value || 'N/A'}
-                  />
+                <div className='grid grid-cols-5 gap-2'>
+                  <div className='grid grid-cols-2 gap-2 col-span-3'>
+                    {values?.exams?.values?.[exam.id]?.reference_relative_value && (
+                      <Input
+                        classNames={{
+                          label: 'font-bold !text-secondary-500',
+                        }}
+                        label={exam.name}
+                        placeholder='Digite aqui'
+                        onChange={(e) => {
+                          setFieldValue(`exams.values.${exam.id}.value`, Number(e.target.value));
+                        }}
+                        type='number'
+                        endContent={<span className='text-[10px] text-secondary-500'>%</span>}
+                      />
+                    )}
+                    <div
+                      className={
+                        !values?.exams?.values?.[exam.id]?.reference_relative_value
+                          ? 'col-span-2'
+                          : ''
+                      }
+                    >
+                      <Input
+                        classNames={{
+                          label: 'font-bold !text-secondary-500',
+                        }}
+                        label={exam.name}
+                        placeholder='Digite aqui'
+                        onChange={(e) => {
+                          setFieldValue(`exams.values.${exam.id}.value`, Number(e.target.value));
+                        }}
+                        type='number'
+                        endContent={
+                          <span className='text-[10px] text-secondary-500'>
+                            {values?.exams?.values?.[exam.id]?.unit}
+                          </span>
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className='col-span-2'>
+                    <Input
+                      label='Valor de referência'
+                      placeholder='Digite aqui'
+                      disabled
+                      readOnly
+                      value={handleReferenceValue(exam.id)}
+                    />
+                  </div>
                 </div>
               </div>
             ))}

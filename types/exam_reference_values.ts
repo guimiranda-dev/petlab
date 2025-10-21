@@ -19,4 +19,7 @@ export interface ExamReferenceValues {
   adult_cat_reference_absolute: string;
   puppy_cat_reference_absolute: string;
   exam_type: ExamType;
+  sample_type: string;
+  method: string;
+  unit: string;
 }
