@@ -7,6 +7,7 @@ import { SearchExam } from '@/components/ExamList/search';
 import { useRouter } from 'next/navigation';
 import { useExamsQueryHook } from '@/hooks/useExamsQuery.hook';
 import { ExamTableData } from '@/components/ExamList/TableData';
+import { Spinner } from '@heroui/spinner';
 
 export default function Page() {
   const [page, setPage] = useState(1);
@@ -37,7 +38,7 @@ export default function Page() {
 
         {isFetching && (
           <div className='flex justify-center items-center'>
-            <span className='loading loading-spinner text-primary-500'></span>
+            <Spinner />
           </div>
         )}
       </section>

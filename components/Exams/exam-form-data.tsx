@@ -67,6 +67,7 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
 
         setFieldValue(`exams.values.${exam.id}.reference_value`, value);
         setFieldValue(`exams.values.${exam.id}.exam_reference_id`, exam.id);
+        setFieldValue(`exams.values.${exam.id}.name`, exam.name);
       });
     });
   }, [data?.data, values.pet]);
@@ -94,6 +95,7 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
                     onChange={(e) => {
                       setFieldValue(`exams.values.${exam.id}.value`, Number(e.target.value));
                     }}
+                    type='number'
                   />
                   <Input
                     label='Valor de referência'

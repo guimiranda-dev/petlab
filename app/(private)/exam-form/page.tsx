@@ -11,33 +11,21 @@ import { examValidationSchema } from '@/schemas/exam-validation.schema';
 import { PetFormData } from '@/components/Exams/pet-form-data';
 import { Button } from '@heroui/button';
 import { useVetQuery } from '@/hooks/useVetQuery.hook';
-import { ExamType } from '@/types/exam_types';
 import { ExamTypeFormData } from '@/components/Exams/exam-type-form-data';
 import { addToast } from '@heroui/toast';
 import { FaCircleCheck, FaSpinner } from 'react-icons/fa6';
 import { MdError } from 'react-icons/md';
 import { ExamValuesRequest, useExamMutation } from '@/hooks/useExamMutation.hook';
 import { useRouter } from 'next/navigation';
-import { PetType } from '@/types/pet';
+import PDFFile from '@/utils/pdfFile';
+import { Document, PDFViewer, usePDF } from '@react-pdf/renderer';
+import { ExamFormProps } from '@/types/exam';
+import { useEffect, useState } from 'react';
+import { Spinner } from '@heroui/spinner';
 
-interface IInitialValues {
-  vet_id: string;
-  pet_id: string;
-  pet: PetType | null;
-  date: string;
-  owner_id: string;
-  exams: {
-    type: ExamType | null;
-    values: {
-      exam_reference_id: number;
-      reference_value: string;
-      value: number;
-    }[];
-  };
-}
-
-const initialValues: IInitialValues = {
+const initialValues: ExamFormProps = {
   pet: null,
+  owner: null,
   vet_id: '',
   pet_id: '',
   date: '',
@@ -72,7 +60,7 @@ export default function Page() {
 
   const { mutate, isPending } = useExamMutation({ onSuccess, onError });
 
-  const submit = (v: IInitialValues) => {
+  const submit = (v: ExamFormProps) => {
     const examValues: ExamValuesRequest[] = [];
     v.exams.values.map((i) => {
       if (i && i.value) {
@@ -105,10 +93,27 @@ export default function Page() {
     validateOnBlur: true,
   });
 
+  const [debouncedValues, setDebouncedValues] = useState(values);
+  const [instance, updateInstance] = usePDF({
+    document: <PDFFile values={debouncedValues} />,
+  });
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedValues(values);
+    }, 500); // Aguarda 500ms após última mudança
+
+    return () => clearTimeout(timer);
+  }, [values]);
+
+  useEffect(() => {
+    updateInstance(<PDFFile values={debouncedValues} />);
+  }, [debouncedValues]);
+
   return (
     <>
       <Header />
-      <section className='container mx-auto max-w-[1800px] grid grid-cols-1 md:grid-cols-2 p-6 my-4 gap-6 bg-white rounded-md'>
+      <section className='container mx-auto max-w-[1800px] min-h-screen grid grid-cols-1 md:grid-cols-2 p-6 my-4 gap-6 bg-white rounded-md'>
         <div className='flex flex-col gap-4'>
           <div className='mb-6'>
             <h1 className='text-3xl text-slate-800 mb-0 font-bold'>
@@ -186,11 +191,18 @@ export default function Page() {
         </div>
 
         <div className='p-4 w-full'>
-          <Card className='w-full'>
-            <CardBody>
-              <p>Make beautiful websites regardless of your design experience.</p>
-            </CardBody>
-          </Card>
+          {instance.loading && (
+            <div className='w-full h-full flex items-center justify-center bg-slate-100 absolute z-50 top-0'>
+              <Spinner size='lg' />
+            </div>
+          )}
+          {instance.url && !instance.loading && (
+            <embed
+              src={instance.url ? `${instance.url}#toolbar=0&navpanes=0&scrollbar=0` : ''}
+              width='100%'
+              height='100%'
+            />
+          )}
         </div>
       </section>
     </>

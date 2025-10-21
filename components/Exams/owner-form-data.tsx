@@ -7,7 +7,7 @@ import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { Link } from '@heroui/link';
 
 interface Props {
-  setFieldValue: (field: string, value: string) => void;
+  setFieldValue: (field: string, value: any) => void;
   touched: { [key: string]: any };
   values: { [key: string]: any };
   errors: { [key: string]: any };
@@ -47,12 +47,15 @@ export function OwnerFormData({ setFieldValue, touched, values, errors }: Props)
     if (data?.data) {
       const selected = data.data.find((i) => i.id === e);
       if (selected) {
+        setFieldValue('owner', selected);
         setFieldValue('owner_id', String(selected.id));
       } else {
         setFieldValue('owner_id', '');
+        setFieldValue('owner', '');
       }
     } else {
       setFieldValue('owner_id', '');
+      setFieldValue('owner', '');
     }
 
     setFieldValue('pet_id', '');

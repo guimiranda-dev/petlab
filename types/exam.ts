@@ -19,3 +19,21 @@ export interface ExamValues {
   exam_id: number;
   reference_value: string;
 }
+
+export interface ExamFormProps {
+  vet_id: string;
+  pet_id: string;
+  pet: PetType | null;
+  owner: { id: string; name: string } | null;
+  date: string;
+  owner_id: string;
+  exams: {
+    type: ExamType | null;
+    values: {
+      exam_reference_id: number;
+      reference_value: string;
+      value: number;
+      name: string;
+    }[];
+  };
+}
