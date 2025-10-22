@@ -116,45 +116,45 @@ export function ExamList({ amount, hasPagination }: Props) {
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(5);
 
-  return (
-    <Table
-      aria-label='Exames'
-      isStriped
-      bottomContent={
-        hasPagination ? (
-          <div className='flex w-full justify-center'>
-            <Pagination
-              isCompact
-              showControls
-              showShadow
-              color='secondary'
-              page={page}
-              total={totalPages}
-              onChange={(page: number) => setPage(page)}
-            />
-          </div>
-        ) : null
-      }
-      classNames={{
-        wrapper: 'min-h-[222px]',
-      }}
-    >
-      <TableHeader columns={columns}>
-        {(column) => (
-          <TableColumn key={column.uid} align={column.alignment || 'start'}>
-            {column.name}
-          </TableColumn>
-        )}
-      </TableHeader>
-      <TableBody items={examData}>
-        {(item) => (
-          <TableRow key={item.id}>
-            {(columnKey) => (
-              <TableCell className='p-4'>{<RowItem user={item} columnKey={columnKey} />}</TableCell>
-            )}
-          </TableRow>
-        )}
-      </TableBody>
-    </Table>
-  );
+  // return (
+  //   <Table
+  //     aria-label='Exames'
+  //     isStriped
+  //     bottomContent={
+  //       hasPagination ? (
+  //         <div className='flex w-full justify-center'>
+  //           <Pagination
+  //             isCompact
+  //             showControls
+  //             showShadow
+  //             color='secondary'
+  //             page={page}
+  //             total={totalPages}
+  //             onChange={(page: number) => setPage(page)}
+  //           />
+  //         </div>
+  //       ) : null
+  //     }
+  //     classNames={{
+  //       wrapper: 'min-h-[222px]',
+  //     }}
+  //   >
+  //     <TableHeader columns={columns}>
+  //       {(column) => (
+  //         <TableColumn key={column.uid} align={column.alignment || 'start'}>
+  //           {column.name}
+  //         </TableColumn>
+  //       )}
+  //     </TableHeader>
+  //     <TableBody items={examData}>
+  //       {(item) => (
+  //         <TableRow key={item.id}>
+  //           {(columnKey) => (
+  //             <TableCell className='p-4'>{<RowItem user={item} columnKey={columnKey} />}</TableCell>
+  //           )}
+  //         </TableRow>
+  //       )}
+  //     </TableBody>
+  //   </Table>
+  // );
 }
