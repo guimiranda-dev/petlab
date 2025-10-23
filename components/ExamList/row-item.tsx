@@ -1,4 +1,3 @@
-import { useDeleteExamMutation } from '@/hooks/useDeleteExamMutation.hook';
 import { generatePdf } from '@/services/generatePdf';
 import { ExamInterface } from '@/types/exam';
 import { ExamType } from '@/types/exam_types';
@@ -6,7 +5,7 @@ import { Spinner } from '@heroui/spinner';
 import { addToast } from '@heroui/toast';
 import { Tooltip } from '@heroui/tooltip';
 import { DateTime } from 'luxon';
-import { Key, useState } from 'react';
+import { Key } from 'react';
 import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
 import { MdCheck, MdError } from 'react-icons/md';
 
