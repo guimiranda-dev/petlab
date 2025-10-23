@@ -38,9 +38,15 @@ const PDFFile = ({ values }: Props) => {
                 <Text style={[styles.mediumTitle, { marginBottom: 4 }]}>{exam.name}</Text>
 
                 <View style={styles.examValuesRow}>
-                  <View style={styles.examValuesColumn}>
-                    <Text style={styles.description}>Amostra: Soro</Text>
-                    <Text style={styles.description}>Método: Jaffé - não modificado</Text>
+                  <View
+                    style={{
+                      ...styles.examValuesColumn,
+                      textAlign: 'left',
+                      alignItems: 'flex-start',
+                    }}
+                  >
+                    <Text style={styles.description}>Amostra: {exam.sample_type}</Text>
+                    <Text style={styles.description}>Método: {exam.method}</Text>
                   </View>
 
                   <View style={styles.examValuesColumn}>

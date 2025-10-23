@@ -1,60 +1,82 @@
 'use client';
 
-import { ExamType } from '@/types/exam_types';
+import { ExamsRequest } from '@/hooks/useExamsQuery.hook';
+import { ExamType, ExamTypeMap } from '@/types/exam_types';
 import { Input } from '@heroui/input';
 import { Select, SelectItem } from '@heroui/select';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AiOutlineSearch } from 'react-icons/ai';
 
 interface Props {
-  onSearch: (value: string) => void;
+  searchValues: ExamsRequest;
+  onSearch: (value: ExamsRequest) => void;
 }
 
-const exams: { key: ExamType; label: string }[] = Object.entries(ExamType).map(([key, value]) => ({
+const exams = Object.entries(ExamTypeMap).map(([key, value]) => ({
   key: key as ExamType,
-  label: value,
+  label: value.label,
 }));
 
-export function SearchExam({ onSearch }: Props) {
-  const [value, setValue] = useState('');
+export function SearchExam({ searchValues, onSearch }: Props) {
+  const [keyword, setKeyword] = useState('');
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [selectedType, setSelectedType] = useState<ExamType | null>(null);
 
-  // Filtro por data
-  // Filtro por tipo de exame
+  useEffect(() => {
+    onSearch({
+      ...searchValues,
+      startDate,
+      endDate,
+      type: selectedType,
+    });
+  }, [startDate, endDate, selectedType]);
 
   return (
     <div className='flex flex-row items-center gap-2 my-4'>
       <Input
-        placeholder='Procure pelo nome do exame'
+        placeholder='Procure pelo nome do pet ou do tutor'
         className='max-w-full w-full'
         endContent={
-          <AiOutlineSearch onClick={() => onSearch(value)} className='cursor-pointer' size={20} />
+          <AiOutlineSearch
+            onClick={() =>
+              onSearch({
+                ...searchValues,
+                keyword,
+              })
+            }
+            className='cursor-pointer'
+            size={20}
+          />
         }
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
+        value={keyword}
+        onChange={(e) => setKeyword(e.target.value)}
         type='search'
         label='Pesquisar'
-        onKeyDown={(e) => e.key === 'Enter' && onSearch(value)}
-        onClear={() => onSearch('')}
+        onKeyDown={(e) =>
+          e.key === 'Enter' &&
+          onSearch({
+            ...searchValues,
+            keyword,
+          })
+        }
       />
       <Input
-        placeholder='Procure pelo nome do exame'
         className='max-w-full w-[200px]'
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
+        value={startDate}
+        onChange={(e) => setStartDate(e.target.value)}
         type='date'
         label='Data de início'
-        onClear={() => onSearch('')}
+        onClear={() => setStartDate('')}
       />
 
       <Input
-        placeholder='Procure pelo nome do exame'
         className='max-w-full w-[200px]'
-        value={value}
-        onChange={(e) => setValue(e.target.value)}
+        value={endDate}
+        onChange={(e) => setEndDate(e.target.value)}
         type='date'
         label='Data de fim'
-        onClear={() => onSearch('')}
+        onClear={() => setEndDate('')}
       />
 
       <Select

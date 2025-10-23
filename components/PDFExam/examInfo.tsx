@@ -13,7 +13,7 @@ export function ExamInfo({ values }: Props) {
       return 'Selecione um pet';
     }
     const birthDate = new Date(values?.pet?.birth_date);
-    const today = new Date();
+    const today = values.date ? new Date(values.date) : new Date();
     const ageInMilliseconds = today.getTime() - birthDate.getTime();
     let age = ageInMilliseconds / (1000 * 60 * 60 * 24 * 30);
 

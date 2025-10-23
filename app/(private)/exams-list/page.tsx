@@ -1,25 +1,33 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Header } from '@/components/header';
 import { Button } from '@heroui/button';
 import { SearchExam } from '@/components/ExamList/search';
 import { useRouter } from 'next/navigation';
-import { useExamsQueryHook } from '@/hooks/useExamsQuery.hook';
+import { ExamsRequest, useExamsQueryHook } from '@/hooks/useExamsQuery.hook';
 import { ExamTableData } from '@/components/ExamList/TableData';
 import { Spinner } from '@heroui/spinner';
 
 export default function Page() {
-  const [page, setPage] = useState(1);
-  const [totalPages, setTotalPages] = useState(5);
+  const [totalPages, setTotalPages] = useState(1);
   const router = useRouter();
-
-  const { data, isFetching } = useExamsQueryHook({
-    currentPage: page,
+  const [searchProps, setSearchProps] = useState<ExamsRequest>({
+    currentPage: 1,
     keyword: '',
     limit: 20,
     type: null,
+    endDate: null,
+    startDate: null,
   });
+
+  const { data, isFetching } = useExamsQueryHook(searchProps);
+
+  useEffect(() => {
+    if (data?.count) {
+      setTotalPages(Math.ceil(data.count / searchProps.limit));
+    }
+  }, [data?.count]);
 
   return (
     <>
@@ -31,9 +39,17 @@ export default function Page() {
             Criar novo exame
           </Button>
         </div>
-        <SearchExam onSearch={(value) => console.log(value)} />
+        <SearchExam
+          onSearch={(v) => setSearchProps({ ...searchProps, ...v })}
+          searchValues={searchProps}
+        />
         {data && !isFetching && (
-          <ExamTableData data={data.data} page={page} setPage={setPage} totalPages={totalPages} />
+          <ExamTableData
+            data={data.data}
+            page={searchProps.currentPage}
+            setPage={(page) => setSearchProps({ ...searchProps, currentPage: page })}
+            totalPages={totalPages}
+          />
         )}
 
         {isFetching && (

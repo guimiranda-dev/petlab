@@ -4,6 +4,7 @@ import { ExamReferenceValues } from '@/types/exam_reference_values';
 import { ExamSubgroup } from '@/types/exam_subgroup';
 import { ExamType } from '@/types/exam_types';
 import { Input } from '@heroui/input';
+import { verifyIfIsAdult } from '@/utils/verifyIfIsAdult';
 
 interface Props {
   examType: ExamType;
@@ -43,21 +44,19 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
     let key_reference = '';
     let key_relative = '';
 
-    let isAdult = false;
+    if (values?.pet?.birth_date) {
+      const isAdult = verifyIfIsAdult(new Date(values?.pet?.birth_date));
+
+      key_reference = `${isAdult ? 'adult' : 'puppy'}_`;
+      key_relative = `${isAdult ? 'adult' : 'puppy'}_`;
+    }
 
     if (values?.pet?.specie === 'Felino') {
-      // Felinos não tem exames adultos/filhotes
       key_reference += 'cat_';
       key_relative += 'cat_';
-    } else if (values?.pet?.birth_date && values?.pet?.specie === 'Canino') {
-      // Caninos tem exames adultos/filhotes
-      const birthDate = new Date(values?.pet?.birth_date);
-      const today = new Date();
-      const ageInMilliseconds = today.getTime() - birthDate.getTime();
-      const ageInDays = ageInMilliseconds / (1000 * 60 * 60 * 24);
-      isAdult = ageInDays >= 90;
-      key_reference = `${isAdult ? 'adult' : 'puppy'}_dog_`;
-      key_relative = `${isAdult ? 'adult' : 'puppy'}_dog_`;
+    } else if (values?.pet?.specie === 'Canino') {
+      key_reference += 'dog_';
+      key_relative += 'dog_';
     }
 
     key_reference += 'reference';
@@ -73,6 +72,8 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
         setFieldValue(`exams.values.${exam.id}.unit`, exam.unit);
         setFieldValue(`exams.values.${exam.id}.exam_reference_id`, exam.id);
         setFieldValue(`exams.values.${exam.id}.name`, exam.name);
+        setFieldValue(`exams.values.${exam.id}.method`, exam.method);
+        setFieldValue(`exams.values.${exam.id}.sample_type`, exam.sample_type);
         setFieldValue(`exams.values.${exam.id}.exam_subgroup`, exam.exam_subgroup);
       });
     });
@@ -117,9 +118,8 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
                         label={exam.name}
                         placeholder='Digite aqui'
                         onChange={(e) => {
-                          setFieldValue(`exams.values.${exam.id}.value`, Number(e.target.value));
+                          setFieldValue(`exams.values.${exam.id}.relative_value`, e.target.value);
                         }}
-                        type='number'
                         endContent={<span className='text-[10px] text-secondary-500'>%</span>}
                       />
                     )}
@@ -137,9 +137,8 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
                         label={exam.name}
                         placeholder='Digite aqui'
                         onChange={(e) => {
-                          setFieldValue(`exams.values.${exam.id}.value`, Number(e.target.value));
+                          setFieldValue(`exams.values.${exam.id}.value`, e.target.value);
                         }}
-                        type='number'
                         endContent={
                           <span className='text-[10px] text-secondary-500'>
                             {values?.exams?.values?.[exam.id]?.unit}

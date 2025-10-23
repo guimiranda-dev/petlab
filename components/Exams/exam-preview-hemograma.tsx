@@ -2,9 +2,10 @@ import { Spinner } from '@heroui/spinner';
 import { usePDF } from '@react-pdf/renderer';
 import { useEffect, useState } from 'react';
 import PDFFile from '../PDFExam/hemograma';
+import { ExamFormProps } from '@/types/exam';
 
 interface Props {
-  values: any;
+  values: ExamFormProps;
 }
 
 export function ExamPreviewHemograma({ values }: Props) {

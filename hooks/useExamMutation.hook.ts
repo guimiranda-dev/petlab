@@ -16,7 +16,8 @@ interface ExamTypeRequest {
 
 export interface ExamValuesRequest {
   exam_reference_id: number;
-  value: number;
+  value: string;
+  relative?: string;
   exam_id: number;
   reference_value: string;
 }

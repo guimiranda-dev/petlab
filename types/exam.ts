@@ -1,3 +1,4 @@
+import { ExamReferenceValues } from './exam_reference_values';
 import { ExamSubgroup } from './exam_subgroup';
 import { ExamType } from './exam_types';
 import { PetType } from './pet';
@@ -9,16 +10,18 @@ export interface ExamInterface {
   vet_id: string;
   date: string;
   vet: VetType;
-  pet: PetType & { owner: { name: string } };
+  pet: PetType & { owner: { name: string; id: string } };
   exam_values: ExamValues[];
   exam_type: ExamType;
 }
 
 export interface ExamValues {
   exam_reference_id: number;
-  value: number;
+  value: string;
+  relative: string;
   exam_id: number;
   reference_value: string;
+  exam_reference_values: ExamReferenceValues;
 }
 
 export interface ExamFormProps {
@@ -36,8 +39,11 @@ export interface ExamFormProps {
       reference_relative_value: string;
       exam_subgroup: ExamSubgroup;
       unit: string;
-      value: number;
+      value: string;
+      relative_value: string;
       name: string;
+      method: string;
+      sample_type: string;
     }[];
   };
 }

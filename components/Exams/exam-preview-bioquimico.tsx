@@ -2,9 +2,10 @@ import { Spinner } from '@heroui/spinner';
 import { usePDF } from '@react-pdf/renderer';
 import { useEffect, useState } from 'react';
 import PDFFile from '../PDFExam/bioquimico';
+import { ExamFormProps } from '@/types/exam';
 
 interface Props {
-  values: any;
+  values: ExamFormProps;
 }
 
 export function ExamPreviewBioquimico({ values }: Props) {

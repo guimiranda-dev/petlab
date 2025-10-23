@@ -4,7 +4,7 @@ import { styles } from './styles';
 
 export function ExamFooter() {
   return (
-    <View style={styles.signContainer}>
+    <View style={styles.signContainer} wrap={false}>
       <Text style={styles.description}>Assinado eletronicamente por:</Text>
       <Image style={styles.signImage} src='/assets/signature.png' />
       <Text style={styles.description}>Médica Veterinária</Text>

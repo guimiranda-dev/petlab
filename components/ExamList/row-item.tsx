@@ -1,16 +1,41 @@
+import { useDeleteExamMutation } from '@/hooks/useDeleteExamMutation.hook';
+import { generatePdf } from '@/services/generatePdf';
 import { ExamInterface } from '@/types/exam';
 import { ExamType } from '@/types/exam_types';
+import { Spinner } from '@heroui/spinner';
+import { addToast } from '@heroui/toast';
 import { Tooltip } from '@heroui/tooltip';
 import { DateTime } from 'luxon';
-import { Key } from 'react';
+import { Key, useState } from 'react';
 import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
+import { MdCheck, MdError } from 'react-icons/md';
 
 interface Props {
   exam: ExamInterface;
   columnKey: Key;
+  handleDelete: (examId: string) => void;
+  isPendingDelete?: boolean;
 }
 
-export function RowItem({ exam, columnKey }: Props) {
+export function RowItem({ exam, columnKey, handleDelete, isPendingDelete }: Props) {
+  const handleGeneratePdf = async () => {
+    try {
+      await generatePdf(exam.id);
+
+      addToast({
+        icon: <MdCheck className='text-white' />,
+        description: 'PDF gerado com sucesso!',
+        color: 'success',
+      });
+    } catch (error) {
+      addToast({
+        icon: <MdError className='text-white' />,
+        description: 'Erro ao gerar o PDF!',
+        color: 'danger',
+      });
+    }
+  };
+
   switch (columnKey) {
     case 'exam_type':
       return (
@@ -41,20 +66,31 @@ export function RowItem({ exam, columnKey }: Props) {
       return (
         <div className='relative flex items-center justify-center gap-6'>
           <Tooltip content='Details'>
-            <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
+            <button
+              className='text-lg text-default-400 cursor-pointer active:opacity-50'
+              type='button'
+              onClick={handleGeneratePdf}
+            >
               <AiFillEye />
-            </span>
+            </button>
           </Tooltip>
           <Tooltip content='Editar exame'>
             <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
               <AiFillEdit />
             </span>
           </Tooltip>
-          <Tooltip color='danger' content='Excluir exame'>
-            <span className='text-lg text-danger cursor-pointer active:opacity-50'>
-              <AiFillDelete />
-            </span>
-          </Tooltip>
+          {isPendingDelete ? (
+            <Spinner size='sm' />
+          ) : (
+            <Tooltip color='danger' content='Excluir exame'>
+              <button
+                className='text-lg text-danger cursor-pointer active:opacity-50'
+                onClick={() => handleDelete(exam.id)}
+              >
+                <AiFillDelete />
+              </button>
+            </Tooltip>
+          )}
         </div>
       );
   }

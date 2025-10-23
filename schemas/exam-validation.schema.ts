@@ -22,7 +22,7 @@ export const examValidationSchema = yup.object().shape({
           yup.object().shape({
             exam_reference_id: yup.number().optional(),
             reference_value: yup.string().optional(),
-            value: yup.number().optional(),
+            value: yup.string().optional(),
           }),
         )
         .test(

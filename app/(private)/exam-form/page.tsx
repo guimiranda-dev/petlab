@@ -68,6 +68,7 @@ export default function Page() {
           exam_reference_id: i.exam_reference_id,
           reference_value: i.reference_value,
           value: i.value,
+          relative: i.relative_value,
         });
       }
     });
