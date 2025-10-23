@@ -68,12 +68,16 @@ const PDFFile = ({ values }: Props) => {
 
                     <View style={styles.examValuesColumn}>
                       <Text style={styles.description}>Valores Obtidos</Text>
-                      <Text style={styles.value}>{exam?.value}</Text>
+                      <Text style={styles.value}>
+                        {exam?.value} {exam?.unit}
+                      </Text>
                     </View>
 
                     <View style={styles.examValuesColumn}>
                       <Text style={styles.description}>Valores de Referência</Text>
-                      <Text style={styles.value}>{exam?.reference_value}</Text>
+                      <Text style={styles.value}>
+                        {exam?.reference_value} {exam?.unit}
+                      </Text>
                     </View>
                   </View>
                 </View>

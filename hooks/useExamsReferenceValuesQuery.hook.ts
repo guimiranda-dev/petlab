@@ -31,6 +31,5 @@ export function useExamsReferenceValuesQuery(examType?: ExamType) {
     queryFn: () => examType && getExamReferenceValues(examType),
     enabled: !!examType,
     select: (data) => data || { data: [] },
-    initialData: { data: [] },
   });
 }

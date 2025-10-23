@@ -1,7 +1,7 @@
 import React from 'react';
 import { Page, Text, View, Document } from '@react-pdf/renderer';
 import { ExamFormProps } from '@/types/exam';
-import { ExamType, ExamTypeMap } from '@/types/exam_types';
+import { ExamTypeMap } from '@/types/exam_types';
 import { ExamHeader } from '@/components/PDFExam/header';
 import { ExamInfo } from './examInfo';
 import { ExamFooter } from './footer';
@@ -51,12 +51,16 @@ const PDFFile = ({ values }: Props) => {
 
                   <View style={styles.examValuesColumn}>
                     <Text style={styles.description}>Valores Obtidos</Text>
-                    <Text style={styles.value}>{exam?.value || '-'}</Text>
+                    <Text style={styles.value}>
+                      {exam?.value || '-'} {exam?.unit}
+                    </Text>
                   </View>
 
                   <View style={styles.examValuesColumn}>
                     <Text style={styles.description}>Valores de Referência</Text>
-                    <Text style={styles.value}>{exam?.reference_value}</Text>
+                    <Text style={styles.value}>
+                      {exam?.reference_value} {exam?.unit}
+                    </Text>
                   </View>
                 </View>
               </View>

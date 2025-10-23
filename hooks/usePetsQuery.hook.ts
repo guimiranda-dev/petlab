@@ -34,6 +34,5 @@ export function usePetsQuery(props: PetRequest) {
     queryKey: ['pets', props],
     enabled: !!props.owner_id,
     select: (data) => data || { data: [] },
-    initialData: { data: [] },
   });
 }
