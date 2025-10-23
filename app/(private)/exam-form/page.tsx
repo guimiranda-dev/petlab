@@ -22,6 +22,7 @@ import { ExamType } from '@/types/exam_types';
 import { ExamPreviewHemograma } from '@/components/Exams/exam-preview-hemograma';
 
 const initialValues: ExamFormProps = {
+  vet: null,
   pet: null,
   owner: null,
   vet_id: '',
@@ -92,6 +93,17 @@ export default function Page() {
     validateOnBlur: true,
   });
 
+  const handleSelectVet = (value: string) => {
+    setFieldValue('vet_id', value);
+
+    const selected = data?.data.find((i) => String(i.id) === String(value));
+    if (selected) {
+      setFieldValue('vet', selected);
+    } else {
+      setFieldValue('vet', null);
+    }
+  };
+
   return (
     <>
       <Header />
@@ -122,7 +134,7 @@ export default function Page() {
               label='Veterinário'
               placeholder='Selecione o veterinário'
               selectedKeys={values.vet_id ? [values.vet_id] : []}
-              onChange={(e) => setFieldValue('vet_id', e.target.value)}
+              onChange={(e) => handleSelectVet(e.target.value)}
               onBlur={() => setFieldTouched('vet_id', true)}
               errorMessage={touched.vet_id && errors.vet_id ? errors.vet_id : ''}
               isInvalid={touched.vet_id && !!errors.vet_id}

@@ -24,6 +24,7 @@ const initialValues: Partial<PetType> = {
 interface Props {
   onClose: () => void;
   owner_id: string;
+  onSelect: (pet: PetType) => void;
 }
 
 const speciesOptions = [
@@ -36,11 +37,20 @@ const genderOptions = [
   { value: 'Fêmea', label: 'Fêmea' },
 ];
 
-export function NewPetForm({ onClose, owner_id }: Props) {
+export function NewPetForm({ onClose, owner_id, onSelect }: Props) {
   const queryClient = useQueryClient();
 
-  const onSuccess = async () => {
+  const onSuccess = async (e: PetType) => {
+    queryClient.setQueriesData({ queryKey: ['pets'] }, (oldData: any) => {
+      if (!oldData) return { data: [e] };
+      return {
+        ...oldData,
+        data: [e, ...(oldData.data || [])],
+      };
+    });
+
     await queryClient.invalidateQueries({ queryKey: ['pets'] });
+    onSelect(e);
     onClose();
     addToast({
       icon: <FaCircleCheck className='text-success' />,

@@ -5,6 +5,7 @@ import { useOwnersQuery } from '@/hooks/useOwnersQuery.hook';
 import { NewOwnerForm } from './new-owner-form';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { Link } from '@heroui/link';
+import { OwnerType } from '@/types/owner';
 
 interface Props {
   setFieldValue: (field: string, value: any) => void;
@@ -42,6 +43,10 @@ export function OwnerFormData({ setFieldValue, touched, values, errors }: Props)
     currentPage: 1,
     keyword: String(filterValue),
   });
+
+  const onOwnerSelect = (owner: OwnerType) => {
+    autocompleteRef.current?.setValue(String(owner.id));
+  };
 
   const onSelectionChange = (e: Key | null) => {
     if (data?.data) {
@@ -136,7 +141,9 @@ export function OwnerFormData({ setFieldValue, touched, values, errors }: Props)
         </Link>
       </div>
 
-      {newOwnerFormShow && <NewOwnerForm onClose={() => setNewOwnerFormShow(false)} />}
+      {newOwnerFormShow && (
+        <NewOwnerForm onClose={() => setNewOwnerFormShow(false)} onSelect={onOwnerSelect} />
+      )}
     </>
   );
 }

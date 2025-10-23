@@ -31,48 +31,53 @@ export function ExamInfo({ values }: Props) {
   const ageText = mountAgeText();
 
   return (
-    <View style={styles.info}>
-      <View style={styles.columnInfo}>
-        <View style={styles.textLine}>
-          <Text style={styles.smallTitle}>Tutor:</Text>
-          <Text style={styles.value}>{values?.owner?.name || 'Selecione um tutor'}</Text>
+    <View>
+      <View style={{ ...styles.textLine, marginVertical: 8 }}>
+        <Text style={styles.smallTitle}>Tutor:</Text>
+        <Text style={styles.value}>{values?.owner?.name || 'Selecione um tutor'}</Text>
+      </View>
+      <View style={styles.info}>
+        <View style={{ ...styles.columnInfo, width: '40%' }}>
+          <View style={styles.textLine}>
+            <Text style={styles.smallTitle}>Nome do animal:</Text>
+            <Text style={styles.value}>{values.pet?.name || 'Selecione um pet'}</Text>
+          </View>
+
+          <View style={styles.textLine}>
+            <Text style={styles.smallTitle}>Sexo:</Text>
+            <Text style={styles.value}>{values.pet?.gender || 'Selecione um pet'}</Text>
+          </View>
+
+          <View style={styles.textLine}>
+            <Text style={styles.smallTitle}>Raça:</Text>
+            <Text style={styles.value}>{values.pet?.breed || 'Selecione um pet'}</Text>
+          </View>
         </View>
 
-        <View style={styles.textLine}>
-          <Text style={styles.smallTitle}>Nome do animal:</Text>
-          <Text style={styles.value}>{values.pet?.name || 'Selecione um pet'}</Text>
-        </View>
+        <View style={{ ...styles.columnInfo, width: '40%' }}>
+          <View style={styles.textLine}>
+            <Text style={styles.smallTitle}>Espécie:</Text>
+            <Text style={styles.value}>{values.pet?.specie || 'Selecione um pet'}</Text>
+          </View>
 
-        <View style={styles.textLine}>
-          <Text style={styles.smallTitle}>Sexo:</Text>
-          <Text style={styles.value}>{values.pet?.gender || 'Selecione um pet'}</Text>
-        </View>
+          <View style={styles.textLine}>
+            <Text style={styles.smallTitle}>Idade:</Text>
+            <Text style={styles.value}>{ageText}</Text>
+          </View>
 
-        <View style={styles.textLine}>
-          <Text style={styles.smallTitle}>Raça:</Text>
-          <Text style={styles.value}>{values.pet?.breed || 'Selecione um pet'}</Text>
+          <View style={styles.textLine}>
+            <Text style={styles.smallTitle}>Data:</Text>
+            <Text style={styles.value}>
+              {values.date
+                ? DateTime.fromISO(values.date).toFormat('dd/MM/yyyy')
+                : 'Selecione uma data'}
+            </Text>
+          </View>
         </View>
       </View>
-
-      <View style={styles.columnInfo}>
-        <View style={styles.textLine}>
-          <Text style={styles.smallTitle}>Espécie:</Text>
-          <Text style={styles.value}>{values.pet?.specie || 'Selecione um pet'}</Text>
-        </View>
-
-        <View style={styles.textLine}>
-          <Text style={styles.smallTitle}>Idade:</Text>
-          <Text style={styles.value}>{ageText}</Text>
-        </View>
-
-        <View style={styles.textLine}>
-          <Text style={styles.smallTitle}>Data:</Text>
-          <Text style={styles.value}>
-            {values.date
-              ? DateTime.fromISO(values.date).toFormat('dd/MM/yyyy')
-              : 'Selecione uma data'}
-          </Text>
-        </View>
+      <View style={{ ...styles.textLine, marginVertical: 8 }}>
+        <Text style={styles.smallTitle}>Veterinário Solicitante:</Text>
+        <Text style={styles.value}>{values?.vet?.name || 'Selecione um veterinário'}</Text>
       </View>
     </View>
   );

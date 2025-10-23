@@ -2,9 +2,10 @@
 import { usePetsQuery } from '@/hooks/usePetsQuery.hook';
 import { Link } from '@heroui/link';
 import { Select, SelectItem } from '@heroui/select';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { AiOutlinePlusCircle } from 'react-icons/ai';
 import { NewPetForm } from './new-pet-form';
+import { PetType } from '@/types/pet';
 
 interface Props {
   setFieldValue: (field: string, value: any) => void;
@@ -19,6 +20,12 @@ export function PetFormData({ setFieldValue, touched, values, errors }: Props) {
   const { data, isFetching } = usePetsQuery({
     owner_id: values.owner_id,
   });
+
+  const onPetSelect = (pet: PetType) => {
+    setNewPetFormShow(false);
+    setFieldValue('pet', pet);
+    setFieldValue('pet_id', String(pet.id));
+  };
 
   const handleSelect = (value: string) => {
     setFieldValue('pet_id', value);
@@ -38,6 +45,7 @@ export function PetFormData({ setFieldValue, touched, values, errors }: Props) {
           <div className='h-[56px] w-full animate-pulse rounded-lg bg-slate-200' />
         ) : (
           <Select
+            isDisabled={values.owner_id ? false : true}
             label='Pet'
             placeholder='Selecione uma opção'
             selectedKeys={values.pet_id ? [values.pet_id] : []}
@@ -74,7 +82,11 @@ export function PetFormData({ setFieldValue, touched, values, errors }: Props) {
         </Link>
       </div>
       {newPetFormShow && values.owner_id && (
-        <NewPetForm onClose={() => setNewPetFormShow(false)} owner_id={values.owner_id} />
+        <NewPetForm
+          onClose={() => setNewPetFormShow(false)}
+          owner_id={values.owner_id}
+          onSelect={onPetSelect}
+        />
       )}
     </>
   );

@@ -4,19 +4,19 @@ import { useMutation } from '@tanstack/react-query';
 
 interface Props {
   onError: (e: Error) => void;
-  onSuccess: () => void;
+  onSuccess: (e: PetType) => void;
 }
 
-const savePet = async (props: Omit<Partial<PetType>, 'id'>) => {
+const savePet = async (props: Omit<Partial<PetType>, 'id'>): Promise<PetType> => {
   const supabase = createClient();
 
-  const { error: userError } = await supabase.from('pet').insert(props);
+  const { data, error: userError } = await supabase.from('pet').insert(props).select().single();
 
   if (userError) {
     throw new Error(userError.message);
   }
 
-  return;
+  return data;
 };
 
 export function usePetMutation({ onSuccess, onError }: Props) {

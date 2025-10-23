@@ -69,6 +69,7 @@ const PDFFile = ({ values }: Props) => {
                     <View style={styles.examValuesColumn}>
                       <Text style={styles.description}>Valores Obtidos</Text>
                       <Text style={styles.value}>
+                        {exam.relative_value !== null ? `${exam.relative_value} % | ` : ''}{' '}
                         {exam?.value} {exam?.unit}
                       </Text>
                     </View>
@@ -76,6 +77,9 @@ const PDFFile = ({ values }: Props) => {
                     <View style={styles.examValuesColumn}>
                       <Text style={styles.description}>Valores de Referência</Text>
                       <Text style={styles.value}>
+                        {exam.reference_relative_value !== null
+                          ? `${exam.reference_relative_value} % | `
+                          : ''}{' '}
                         {exam?.reference_value} {exam?.unit}
                       </Text>
                     </View>

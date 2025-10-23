@@ -9,6 +9,7 @@ import { Button } from '@heroui/button';
 import { ownerValidationSchema } from '@/schemas/owner-validation.schema';
 import { addToast } from '@heroui/toast';
 import { useOwnerMutation } from '@/hooks/useOwnerMutation.hook';
+import { OwnerType } from '@/types/owner';
 
 interface InitialValuesProps {
   name: string;
@@ -22,13 +23,23 @@ const initialValues: InitialValuesProps = {
 
 interface Props {
   onClose: () => void;
+  onSelect: (owner: OwnerType) => void;
 }
 
-export function NewOwnerForm({ onClose }: Props) {
+export function NewOwnerForm({ onClose, onSelect }: Props) {
   const queryClient = useQueryClient();
 
-  const onSuccess = async () => {
+  const onSuccess = async (e: OwnerType) => {
+    queryClient.setQueriesData({ queryKey: ['owners'] }, (oldData: any) => {
+      if (!oldData) return { data: [e] };
+      return {
+        ...oldData,
+        data: [e, ...(oldData.data || [])],
+      };
+    });
+
     await queryClient.invalidateQueries({ queryKey: ['owners'] });
+    onSelect(e);
     onClose();
     addToast({
       icon: <FaCircleCheck className='text-success' />,

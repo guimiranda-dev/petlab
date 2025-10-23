@@ -26,6 +26,7 @@ export interface ExamValues {
 
 export interface ExamFormProps {
   vet_id: string;
+  vet: VetType | null;
   pet_id: string;
   pet: PetType | null;
   owner: { id: string; name: string } | null;
