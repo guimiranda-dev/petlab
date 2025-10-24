@@ -74,6 +74,7 @@ export async function generatePdf(examId: string) {
       owner_id: data.pet.owner_id,
       owner: data.pet.owner,
       pet: data.pet,
+      vet: data.vet,
       exams: {
         type: data.exam_type,
         values: data.exam_values.map((i) => ({
