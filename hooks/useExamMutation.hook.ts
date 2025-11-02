@@ -25,26 +25,49 @@ export interface ExamValuesRequest {
 interface ExamRequest {
   exam: ExamTypeRequest;
   examValues: ExamValuesRequest[];
+  id: string | null;
 }
 
-const saveExam = async ({ exam, examValues }: ExamRequest) => {
+const saveExam = async ({ exam, examValues, id }: ExamRequest) => {
   const supabase = createClient();
 
-  const { data, error: userError } = await supabase.from('exam').insert(exam).select('*');
+  if (id) {
+    // Update
+    const { error: userError } = await supabase.from('exam').update(exam).eq('id', id);
 
-  if (userError) {
-    throw new Error(userError.message);
-  }
+    if (userError) {
+      throw new Error(userError.message);
+    }
 
-  const examsWithId = examValues.map((i) => ({
-    ...i,
-    exam_id: data[0].id,
-  }));
+    const examsWithId = examValues.map((i) => ({
+      ...i,
+      exam_id: id,
+    }));
 
-  const { error: valuesError } = await supabase.from('exam_values').insert(examsWithId);
+    await supabase.from('exam_values').delete().eq('exam_id', id);
 
-  if (valuesError) {
-    throw new Error(valuesError.message);
+    const { error: valuesError } = await supabase.from('exam_values').insert(examsWithId);
+
+    if (valuesError) {
+      throw new Error(valuesError.message);
+    }
+  } else {
+    // Insert
+    const { data, error: userError } = await supabase.from('exam').insert(exam).select('*');
+    if (userError) {
+      throw new Error(userError.message);
+    }
+
+    const examsWithId = examValues.map((i) => ({
+      ...i,
+      exam_id: data[0].id,
+    }));
+
+    const { error: valuesError } = await supabase.from('exam_values').insert(examsWithId);
+
+    if (valuesError) {
+      throw new Error(valuesError.message);
+    }
   }
 
   return;

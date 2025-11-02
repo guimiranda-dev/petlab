@@ -5,11 +5,13 @@ import { ExamSubgroup } from '@/types/exam_subgroup';
 import { ExamType } from '@/types/exam_types';
 import { Input } from '@heroui/input';
 import { verifyIfIsAdult } from '@/utils/verifyIfIsAdult';
+import { ExamInterface } from '@/types/exam';
 
 interface Props {
   examType: ExamType;
   setFieldValue: (field: string, value: any) => void;
   values: { [key: string]: any };
+  examSaved: ExamInterface | null;
 }
 
 function groupBySubgroup(data: ExamReferenceValues[]) {
@@ -30,7 +32,7 @@ function groupBySubgroup(data: ExamReferenceValues[]) {
   return grouped;
 }
 
-export function ExamFormData({ examType, setFieldValue, values }: Props) {
+export function ExamFormData({ examType, setFieldValue, values, examSaved }: Props) {
   const { data, isFetching } = useExamsReferenceValuesQuery(examType);
 
   const groupedData = useMemo(() => {
@@ -75,9 +77,18 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
         setFieldValue(`exams.values.${exam.id}.method`, exam.method);
         setFieldValue(`exams.values.${exam.id}.sample_type`, exam.sample_type);
         setFieldValue(`exams.values.${exam.id}.exam_subgroup`, exam.exam_subgroup);
+
+        if (examSaved) {
+          const savedValues = examSaved.exam_values;
+          const savedValue = savedValues.find((value) => value.exam_reference_id === exam.id);
+          if (savedValue) {
+            setFieldValue(`exams.values.${exam.id}.value`, savedValue.value);
+            setFieldValue(`exams.values.${exam.id}.relative_value`, savedValue.relative);
+          }
+        }
       });
     });
-  }, [data?.data, values.pet]);
+  }, [data?.data, values.pet, examSaved]);
 
   const handleReferenceValue = (examId: number) => {
     const absoluteValue = values?.exams?.values?.[examId]?.reference_value;
@@ -120,6 +131,7 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
                         onChange={(e) => {
                           setFieldValue(`exams.values.${exam.id}.relative_value`, e.target.value);
                         }}
+                        value={values?.exams?.values?.[exam.id]?.relative_value}
                         endContent={<span className='text-[10px] text-secondary-500'>%</span>}
                       />
                     )}
@@ -139,6 +151,7 @@ export function ExamFormData({ examType, setFieldValue, values }: Props) {
                         onChange={(e) => {
                           setFieldValue(`exams.values.${exam.id}.value`, e.target.value);
                         }}
+                        value={values?.exams?.values?.[exam.id]?.value}
                         endContent={
                           <span className='text-[10px] text-secondary-500'>
                             {values?.exams?.values?.[exam.id]?.unit}

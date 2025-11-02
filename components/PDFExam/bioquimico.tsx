@@ -1,11 +1,12 @@
 import React from 'react';
 import { Page, Text, View, Document } from '@react-pdf/renderer';
 import { ExamFormProps } from '@/types/exam';
-import { ExamTypeMap } from '@/types/exam_types';
+import { ExamType, ExamTypeMap } from '@/types/exam_types';
 import { ExamHeader } from '@/components/PDFExam/header';
 import { ExamInfo } from './examInfo';
 import { ExamFooter } from './footer';
 import { styles } from './styles';
+import { ExamReferences } from './examReferences';
 
 interface Props {
   values: ExamFormProps;
@@ -35,7 +36,7 @@ const PDFFile = ({ values }: Props) => {
           .map((exam, idx) => (
             <View key={idx} wrap={false}>
               <View>
-                <Text style={[styles.mediumTitle, { marginBottom: 4 }]}>{exam.name}</Text>
+                <Text style={[styles.mediumTitle, { marginVertical: 4 }]}>{exam.name}</Text>
 
                 <View style={styles.examValuesRow}>
                   <View
@@ -69,6 +70,8 @@ const PDFFile = ({ values }: Props) => {
           ))}
 
         <ExamFooter />
+
+        <ExamReferences type={ExamType.bioquimico} />
       </Page>
     </Document>
   );

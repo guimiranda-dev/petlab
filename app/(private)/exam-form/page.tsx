@@ -15,11 +15,15 @@ import { addToast } from '@heroui/toast';
 import { FaCircleCheck, FaSpinner } from 'react-icons/fa6';
 import { MdError } from 'react-icons/md';
 import { ExamValuesRequest, useExamMutation } from '@/hooks/useExamMutation.hook';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { ExamFormProps } from '@/types/exam';
 import { ExamPreviewBioquimico } from '@/components/Exams/exam-preview-bioquimico';
 import { ExamType } from '@/types/exam_types';
 import { ExamPreviewHemograma } from '@/components/Exams/exam-preview-hemograma';
+import { Suspense, useEffect } from 'react';
+import { useExamByIdQuery } from '@/hooks/useExamByIdQuery.hook';
+import { DateTime } from 'luxon';
+import { useQueryClient } from '@tanstack/react-query';
 
 const initialValues: ExamFormProps = {
   vet: null,
@@ -35,16 +39,25 @@ const initialValues: ExamFormProps = {
   },
 };
 
-export default function Page() {
+function ExamFormContent() {
   const { data, isFetching } = useVetQuery();
   const router = useRouter();
+  const params = useSearchParams();
+
+  const queryClient = useQueryClient();
+
+  const id = params.get('id');
+
+  const { data: exam } = useExamByIdQuery(id);
 
   const onSuccess = () => {
+    queryClient.invalidateQueries({ queryKey: ['exams'] });
+    queryClient.invalidateQueries({ queryKey: ['exam-by-id', id] });
     router.replace('/exams-list');
 
     addToast({
       icon: <FaCircleCheck className='text-success' />,
-      description: 'Exame criado com sucesso!',
+      description: id ? 'Exame atualizado com sucesso!' : 'Exame criado com sucesso!',
     });
   };
 
@@ -82,16 +95,18 @@ export default function Page() {
         exam_type: v.exams.type,
       },
       examValues: examValues,
+      id: id,
     });
   };
 
-  const { values, setFieldValue, handleSubmit, errors, touched, setFieldTouched } = useFormik({
-    initialValues,
-    enableReinitialize: true,
-    onSubmit: submit,
-    validationSchema: examValidationSchema,
-    validateOnBlur: true,
-  });
+  const { values, setFieldValue, handleSubmit, errors, touched, setFieldTouched, status } =
+    useFormik({
+      initialValues,
+      enableReinitialize: true,
+      onSubmit: submit,
+      validationSchema: examValidationSchema,
+      validateOnBlur: true,
+    });
 
   const handleSelectVet = (value: string) => {
     setFieldValue('vet_id', value);
@@ -103,6 +118,22 @@ export default function Page() {
       setFieldValue('vet', null);
     }
   };
+
+  useEffect(() => {
+    if (exam?.data) {
+      setFieldValue('vet', exam.data.vet);
+      setFieldValue('pet', exam.data.pet);
+      setFieldValue('owner', exam.data.pet.owner);
+      setFieldValue('vet_id', exam.data.vet_id);
+      setFieldValue('date', DateTime.fromISO(exam.data.date).toFormat('yyyy-MM-dd'));
+      setFieldValue('owner_id', exam.data.pet.owner_id);
+      setTimeout(() => {
+        setFieldValue('pet_id', exam.data?.pet_id);
+      }, 2000);
+
+      setFieldValue(`exams`, { type: exam.data.exam_type, values: [{}] });
+    }
+  }, [exam]);
 
   return (
     <>
@@ -170,6 +201,7 @@ export default function Page() {
               setFieldValue={setFieldValue}
               touched={touched}
               values={values}
+              examSaved={exam?.data || null}
             />
           )}
 
@@ -188,5 +220,13 @@ export default function Page() {
         {values.exams.type === ExamType.hemograma && <ExamPreviewHemograma values={values} />}
       </section>
     </>
+  );
+}
+
+export default function Page() {
+  return (
+    <Suspense>
+      <ExamFormContent />
+    </Suspense>
   );
 }

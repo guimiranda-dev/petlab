@@ -74,7 +74,9 @@ export function OwnerFormData({ setFieldValue, touched, values, errors }: Props)
     if (data?.data && data?.data?.length > 0 && values.owner_id) {
       const selected = data.data.find((i) => i.id === values.owner_id);
       if (selected) {
-        setInputValue(`${selected.id} - ${selected.name}`);
+        const formattedLabel = `${selected.external_id ? `${selected.external_id} - ` : ''}${selected.name}`;
+        autocompleteRef.current?.setValue(String(selected.id), formattedLabel);
+        // setInputValue(`${selected.id} - ${selected.name}`);
 
         setTimeout(() => {
           setLoaded(true);

@@ -1,6 +1,7 @@
 import { Select, SelectItem } from '@heroui/select';
 import { ExamFormData } from './exam-form-data';
 import { ExamType, ExamTypeMap } from '@/types/exam_types';
+import { ExamInterface } from '@/types/exam';
 
 const exams = Object.entries(ExamTypeMap).map(([key, value]) => ({
   key: key as ExamType,
@@ -12,9 +13,10 @@ interface Props {
   touched: { [key: string]: any };
   values: { [key: string]: any };
   errors: { [key: string]: any };
+  examSaved: ExamInterface | null;
 }
 
-export function ExamTypeFormData({ setFieldValue, values, errors }: Props) {
+export function ExamTypeFormData({ setFieldValue, values, errors, examSaved }: Props) {
   return (
     <div className='space-y-4'>
       <div className='flex items-center justify-center gap-2'>
@@ -35,7 +37,12 @@ export function ExamTypeFormData({ setFieldValue, values, errors }: Props) {
       </div>
 
       {values.exams.type && (
-        <ExamFormData examType={values.exams.type} setFieldValue={setFieldValue} values={values} />
+        <ExamFormData
+          examType={values.exams.type}
+          setFieldValue={setFieldValue}
+          values={values}
+          examSaved={examSaved}
+        />
       )}
 
       {errors?.exams?.type && (

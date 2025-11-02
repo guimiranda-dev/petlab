@@ -10,7 +10,7 @@ export const styles = StyleSheet.create({
     backgroundColor: '#EAEAEA',
     height: 1,
     width: '100%',
-    marginVertical: 12,
+    marginVertical: 4,
   },
   examValuesRow: {
     flexDirection: 'row',
@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
     width: '25%',
   },
   value: {
-    fontSize: 12,
+    fontSize: 10,
     fontWeight: 'bold',
   },
   title: {
@@ -35,6 +35,10 @@ export const styles = StyleSheet.create({
   description: {
     fontSize: 11,
     marginBottom: 2,
+  },
+  references: {
+    fontSize: 6,
+    marginBottom: 4,
   },
   mediumTitle: {
     fontSize: 14,
@@ -52,7 +56,7 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
   smallTitle: {
-    fontSize: 12,
+    fontSize: 10,
   },
   header: {
     flexDirection: 'row',

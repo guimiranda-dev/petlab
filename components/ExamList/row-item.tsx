@@ -5,6 +5,7 @@ import { Spinner } from '@heroui/spinner';
 import { addToast } from '@heroui/toast';
 import { Tooltip } from '@heroui/tooltip';
 import { DateTime } from 'luxon';
+import { useRouter } from 'next/navigation';
 import { Key } from 'react';
 import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
 import { MdCheck, MdError } from 'react-icons/md';
@@ -17,6 +18,7 @@ interface Props {
 }
 
 export function RowItem({ exam, columnKey, handleDelete, isPendingDelete }: Props) {
+  const router = useRouter();
   const handleGeneratePdf = async () => {
     try {
       await generatePdf(exam.id);
@@ -33,6 +35,10 @@ export function RowItem({ exam, columnKey, handleDelete, isPendingDelete }: Prop
         color: 'danger',
       });
     }
+  };
+
+  const handleEdit = (id: string) => {
+    router.push(`/exam-form?id=${id}`);
   };
 
   switch (columnKey) {
@@ -74,9 +80,12 @@ export function RowItem({ exam, columnKey, handleDelete, isPendingDelete }: Prop
             </button>
           </Tooltip>
           <Tooltip content='Editar exame'>
-            <span className='text-lg text-default-400 cursor-pointer active:opacity-50'>
+            <button
+              className='text-lg text-default-400 cursor-pointer active:opacity-50'
+              onClick={() => handleEdit(exam.id)}
+            >
               <AiFillEdit />
-            </span>
+            </button>
           </Tooltip>
           {isPendingDelete ? (
             <Spinner size='sm' />

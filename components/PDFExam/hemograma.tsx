@@ -1,12 +1,13 @@
 import React from 'react';
 import { Page, Text, View, Document } from '@react-pdf/renderer';
 import { ExamFormProps } from '@/types/exam';
-import { ExamTypeMap } from '@/types/exam_types';
+import { ExamType, ExamTypeMap } from '@/types/exam_types';
 import { ExamHeader } from '@/components/PDFExam/header';
 import { ExamInfo } from './examInfo';
 import { ExamFooter } from './footer';
 import { styles } from './styles';
 import { ExamSubgroup } from '@/types/exam_subgroup';
+import { ExamReferences } from './examReferences';
 
 interface Props {
   values: ExamFormProps;
@@ -51,10 +52,14 @@ const PDFFile = ({ values }: Props) => {
         </Text>
 
         <View style={styles.line}></View>
+        <Text style={{ ...styles.smallTitle, marginTop: 12 }}>
+          Método: Impedância + Leitura de esfregaço sanguíneo
+        </Text>
+        <Text style={styles.smallTitle}>Material: Sangue total em EDTA</Text>
 
         {Object.entries(groupedExams).map(([subgroupName, exams]) => (
-          <View key={subgroupName} wrap={false}>
-            <Text style={[styles.mediumTitle, { marginBottom: 8 }]}>
+          <View key={subgroupName}>
+            <Text style={[styles.mediumTitle, { marginVertical: 8 }]}>
               {ExamSubgroup[subgroupName as keyof typeof ExamSubgroup] || subgroupName}
             </Text>
 
@@ -92,6 +97,8 @@ const PDFFile = ({ values }: Props) => {
         ))}
 
         <ExamFooter />
+
+        <ExamReferences type={ExamType.hemograma} />
       </Page>
     </Document>
   );
