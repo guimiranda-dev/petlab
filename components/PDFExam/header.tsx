@@ -5,7 +5,7 @@ import { styles } from './styles';
 export function ExamHeader() {
   return (
     <View style={styles.header}>
-      <Image style={styles.logo} src='/assets/logo.png' />
+      <Image style={styles.logo} src='/assets/mini-logo-pdf.png' />
       <View style={styles.headerCard}>
         <View style={styles.headerLine}>
           <Svg viewBox='0 0 640 640' style={{ width: 12, height: 12 }}>

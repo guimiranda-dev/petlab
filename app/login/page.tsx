@@ -69,7 +69,7 @@ export default function LoginPage() {
 
         <div className='flex flex-col justify-center gap-4 p-4 max-w-lg mx-auto w-full'>
           <Image
-            src='/assets/logo.png'
+            src='/assets/logo.svg'
             alt='Login Banner'
             width={200}
             height={200}
