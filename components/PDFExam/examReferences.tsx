@@ -4,7 +4,7 @@ import { ExamType } from '@/types/exam_types';
 
 export function ExamReferences({ type }: { type: ExamType }) {
   const hemograma = (
-    <View style={{ marginTop: 48 }}>
+    <View>
       <Text style={styles.references}>
         THRALL, M. A.; WEISER, G.; ALLISON, R. W.; CAMPBELL, T. W. Hematologia e Bioquímica Clínica
         Veterinária. 2ª ed. Rio de Janeiro: Guanabara Koogan, 2015.
@@ -32,7 +32,7 @@ export function ExamReferences({ type }: { type: ExamType }) {
   );
 
   const urinalise = (
-    <View style={{ marginTop: 48 }}>
+    <View>
       <Text style={styles.references}>
         THRALL, M. A.; WEISER, G.; ALLISON, R. W.; CAMPBELL, T. W. Hematologia e Bioquímica Clínica
         Veterinária. 3ª ed. Elsevier, 2022.
@@ -53,7 +53,7 @@ export function ExamReferences({ type }: { type: ExamType }) {
   );
 
   const coproparasitologico = (
-    <View style={{ marginTop: 48 }}>
+    <View>
       <Text style={styles.references}>
         LOPES, S. T. A.; BIONDO, A. W.; SANTOS, A. P. Patologia Clínica Veterinária. 3ª ed. Santa
         Maria: Editora UFSM, 2017.
@@ -78,7 +78,7 @@ export function ExamReferences({ type }: { type: ExamType }) {
   );
 
   const reticulocitos = (
-    <View style={{ marginTop: 48 }}>
+    <View>
       <Text style={styles.references}>
         THRALL, M. A.; WEISER, G.; ALLISON, R. W.; CAMPBELL, T. W. Hematologia e Bioquímica Clínica
         Veterinária. 3ª ed. Elsevier, 2022.
@@ -103,6 +103,7 @@ export function ExamReferences({ type }: { type: ExamType }) {
 
   return (
     <View wrap={false}>
+      <Text style={{ ...styles.references, marginTop: 48 }}>Referências:</Text>
       {(type === ExamType.hemograma || type === ExamType.bioquimico) && hemograma}
       {type === ExamType.urinalise && urinalise}
       {type === ExamType.coproparasitologico && coproparasitologico}

@@ -77,7 +77,11 @@ export function ExamInfo({ values }: Props) {
       </View>
       <View style={{ ...styles.textLine, marginVertical: 8 }}>
         <Text style={styles.smallTitle}>Veterinário Solicitante:</Text>
-        <Text style={styles.value}>{values?.vet?.name || 'Selecione um veterinário'}</Text>
+        <Text style={styles.value}>
+          {values?.vet
+            ? `${values?.vet?.name} - CRMV ${values?.vet?.cmv}`
+            : 'Selecione um veterinário'}
+        </Text>
       </View>
     </View>
   );

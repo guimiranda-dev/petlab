@@ -24,16 +24,17 @@ export const styles = StyleSheet.create({
     width: '25%',
   },
   value: {
-    fontSize: 10,
+    fontSize: 8,
     fontWeight: 'bold',
   },
   title: {
-    fontSize: 16,
+    fontSize: 10,
     fontWeight: 'bold',
     textAlign: 'center',
+    color: '#388d9b',
   },
   description: {
-    fontSize: 11,
+    fontSize: 8,
     marginBottom: 2,
   },
   references: {
@@ -41,7 +42,7 @@ export const styles = StyleSheet.create({
     marginBottom: 4,
   },
   mediumTitle: {
-    fontSize: 14,
+    fontSize: 9,
     fontWeight: 'bold',
   },
   textLine: {
@@ -56,7 +57,7 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
   smallTitle: {
-    fontSize: 10,
+    fontSize: 8,
   },
   header: {
     flexDirection: 'row',
@@ -64,7 +65,7 @@ export const styles = StyleSheet.create({
     alignItems: 'center',
   },
   headerCard: {
-    borderColor: '#6eaeb7',
+    borderColor: '#388d9b',
     borderWidth: 2,
     borderRadius: 5,
     padding: 12,
@@ -81,12 +82,12 @@ export const styles = StyleSheet.create({
     height: 16,
   },
   headerText: {
-    fontSize: 12,
+    fontSize: 8,
     textAlign: 'left',
     color: '#777777',
   },
   logo: {
-    width: 180,
+    width: 90,
   },
   signImage: {
     width: 200,
