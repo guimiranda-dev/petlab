@@ -4,7 +4,7 @@ import { styles } from './styles';
 
 export function ExamHeader() {
   return (
-    <View>
+    <View style={{ marginTop: -24 }}>
       <Image
         style={{
           width: '100%',

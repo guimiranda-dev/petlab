@@ -16,7 +16,7 @@ interface Props {
 const PDFFile = ({ values }: Props) => {
   return (
     <Document>
-      <Page>
+      <Page style={{ paddingVertical: 24 }}>
         <ExamHeader />
         <View style={styles.body}>
           <ExamInfo values={values} />

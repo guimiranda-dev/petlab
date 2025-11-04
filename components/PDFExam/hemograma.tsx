@@ -38,7 +38,7 @@ const PDFFile = ({ values }: Props) => {
 
   return (
     <Document>
-      <Page>
+      <Page style={{ paddingVertical: 24 }}>
         <View style={styles.body}>
           <ExamHeader />
 
@@ -73,7 +73,9 @@ const PDFFile = ({ values }: Props) => {
                       <View style={styles.examValuesColumn}>
                         <Text style={styles.description}>Valores Obtidos</Text>
                         <Text style={styles.value}>
-                          {exam.relative_value !== null ? `${exam.relative_value} % | ` : ''}{' '}
+                          {exam.relative_value !== null && exam.relative_value
+                            ? `${exam.relative_value} % | `
+                            : ''}{' '}
                           {exam?.value} {exam?.unit}
                         </Text>
                       </View>
