@@ -39,9 +39,8 @@ const PDFFile = ({ values }: Props) => {
   return (
     <Document>
       <Page style={{ paddingVertical: 24 }}>
+        <ExamHeader />
         <View style={styles.body}>
-          <ExamHeader />
-
           <ExamInfo values={values} />
 
           <View style={styles.line}></View>
