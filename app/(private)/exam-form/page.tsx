@@ -1,6 +1,6 @@
 'use client';
 
-import { Input } from '@heroui/input';
+import { Input, Textarea } from '@heroui/input';
 import { Divider } from '@heroui/divider';
 import { Select, SelectItem } from '@heroui/select';
 import { Header } from '@/components/header';
@@ -33,6 +33,7 @@ const initialValues: ExamFormProps = {
   pet_id: '',
   date: '',
   owner_id: '',
+  obs: '',
   exams: {
     type: null,
     values: [],
@@ -93,6 +94,7 @@ function ExamFormContent() {
         pet_id: v.pet_id,
         vet_id: v.vet_id,
         exam_type: v.exams.type,
+        obs: v.obs,
       },
       examValues: examValues,
       id: id,
@@ -125,6 +127,7 @@ function ExamFormContent() {
       setFieldValue('pet', exam.data.pet);
       setFieldValue('owner', exam.data.pet.owner);
       setFieldValue('vet_id', exam.data.vet_id);
+      setFieldValue('obs', exam.data.obs || '');
       setFieldValue('date', DateTime.fromISO(exam.data.date).toFormat('yyyy-MM-dd'));
       setFieldValue('owner_id', exam.data.pet.owner_id);
       setTimeout(() => {
@@ -204,6 +207,13 @@ function ExamFormContent() {
               examSaved={exam?.data || null}
             />
           )}
+
+          <Textarea
+            fullWidth
+            label='Observações'
+            onValueChange={(e) => setFieldValue('obs', e)}
+            value={values.obs}
+          />
 
           {isPending ? (
             <div className='flex w-full items-center justify-center'>

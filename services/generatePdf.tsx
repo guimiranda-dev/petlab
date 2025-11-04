@@ -30,7 +30,7 @@ export async function generatePdf(examId: string) {
       vet:vet(*),
       pet:pet(
         *,
-        owner:owner(name, id)
+        owner:owner(name, id, external_id)
       ),
       exam_values(*, exam_reference_values(*))
     `,
@@ -75,6 +75,7 @@ export async function generatePdf(examId: string) {
       owner: data.pet.owner,
       pet: data.pet,
       vet: data.vet,
+      obs: data.obs,
       exams: {
         type: data.exam_type,
         values: data.exam_values.map((i) => ({
@@ -99,7 +100,11 @@ export async function generatePdf(examId: string) {
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
-    link.download = `exame_${data.pet.name}_${DateTime.fromISO(data.date).toFormat('dd-MM-yyyy')}.pdf`;
+
+    let name = data.exam_type === ExamType.hemograma ? 'H ' : 'B ';
+    name += `${data.pet.name.toUpperCase()} - `;
+    name += `${data.pet.owner.name.toUpperCase()} ${data.pet.owner?.external_id || ''}`;
+    link.download = `${name}.pdf`;
     link.click();
 
     URL.revokeObjectURL(url);

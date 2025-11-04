@@ -7,7 +7,7 @@ import { Tooltip } from '@heroui/tooltip';
 import { DateTime } from 'luxon';
 import { useRouter } from 'next/navigation';
 import { Key } from 'react';
-import { AiFillDelete, AiFillEdit, AiFillEye } from 'react-icons/ai';
+import { AiFillDelete, AiFillEdit, AiFillFilePdf } from 'react-icons/ai';
 import { MdCheck, MdError } from 'react-icons/md';
 
 interface Props {
@@ -70,13 +70,13 @@ export function RowItem({ exam, columnKey, handleDelete, isPendingDelete }: Prop
     default:
       return (
         <div className='relative flex items-center justify-center gap-6'>
-          <Tooltip content='Details'>
+          <Tooltip content='Gerar PDF'>
             <button
               className='text-lg text-default-400 cursor-pointer active:opacity-50'
               type='button'
               onClick={handleGeneratePdf}
             >
-              <AiFillEye />
+              <AiFillFilePdf />
             </button>
           </Tooltip>
           <Tooltip content='Editar exame'>

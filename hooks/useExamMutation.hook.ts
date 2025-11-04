@@ -12,6 +12,7 @@ interface ExamTypeRequest {
   vet_id: string;
   date: string;
   exam_type: ExamType | null;
+  obs: string;
 }
 
 export interface ExamValuesRequest {

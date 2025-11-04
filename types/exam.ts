@@ -10,9 +10,10 @@ export interface ExamInterface {
   vet_id: string;
   date: string;
   vet: VetType;
-  pet: PetType & { owner: { name: string; id: string } };
+  pet: PetType & { owner: { name: string; id: string; external_id?: string } };
   exam_values: ExamValues[];
   exam_type: ExamType;
+  obs: string;
 }
 
 export interface ExamValues {
@@ -32,6 +33,7 @@ export interface ExamFormProps {
   owner: { id: string; name: string } | null;
   date: string;
   owner_id: string;
+  obs: string;
   exams: {
     type: ExamType | null;
     values: {

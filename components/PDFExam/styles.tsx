@@ -2,9 +2,9 @@ import { StyleSheet } from '@react-pdf/renderer';
 
 export const styles = StyleSheet.create({
   body: {
-    paddingTop: 35,
-    paddingBottom: 65,
-    paddingHorizontal: 35,
+    paddingTop: 12,
+    paddingBottom: 20,
+    paddingHorizontal: 16,
   },
   line: {
     backgroundColor: '#EAEAEA',
@@ -60,17 +60,8 @@ export const styles = StyleSheet.create({
     fontSize: 8,
   },
   header: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-  },
-  headerCard: {
-    borderColor: '#388d9b',
-    borderWidth: 2,
-    borderRadius: 5,
-    padding: 12,
-    width: 290,
-    gap: 2,
+    textAlign: 'right',
+    height: 110,
   },
   headerLine: {
     flexDirection: 'row',
@@ -81,16 +72,27 @@ export const styles = StyleSheet.create({
     width: 16,
     height: 16,
   },
+  headerInfo: {
+    justifyContent: 'flex-end',
+    marginRight: 18,
+    textAlign: 'right',
+    marginTop: 18,
+    gap: 2,
+  },
   headerText: {
-    fontSize: 8,
-    textAlign: 'left',
-    color: '#777777',
+    fontSize: 10,
+    textAlign: 'right',
+    color: '#FFFFFF',
+    justifyContent: 'flex-end',
   },
   logo: {
-    width: 90,
+    width: 120,
+    position: 'absolute',
+    top: 48,
+    left: 48,
   },
   signImage: {
-    width: 200,
+    width: 120,
   },
   signContainer: {
     alignItems: 'center',

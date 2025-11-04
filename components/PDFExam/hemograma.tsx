@@ -38,67 +38,74 @@ const PDFFile = ({ values }: Props) => {
 
   return (
     <Document>
-      <Page style={styles.body}>
-        <ExamHeader />
+      <Page>
+        <View style={styles.body}>
+          <ExamHeader />
 
-        <View style={styles.line}></View>
+          <ExamInfo values={values} />
 
-        <ExamInfo values={values} />
+          <View style={styles.line}></View>
 
-        <View style={styles.line}></View>
+          <Text style={styles.title}>
+            {values.exams.type ? ExamTypeMap[values.exams.type].label : 'Selecione um exame'}
+          </Text>
 
-        <Text style={styles.title}>
-          {values.exams.type ? ExamTypeMap[values.exams.type].label : 'Selecione um exame'}
-        </Text>
+          <View style={styles.line}></View>
+          <Text style={{ ...styles.smallTitle, marginTop: 12 }}>
+            Método: Impedância + Leitura de esfregaço sanguíneo
+          </Text>
+          <Text style={styles.smallTitle}>Material: Sangue total em EDTA</Text>
 
-        <View style={styles.line}></View>
-        <Text style={{ ...styles.smallTitle, marginTop: 12 }}>
-          Método: Impedância + Leitura de esfregaço sanguíneo
-        </Text>
-        <Text style={styles.smallTitle}>Material: Sangue total em EDTA</Text>
+          {Object.entries(groupedExams).map(([subgroupName, exams]) => (
+            <View key={subgroupName}>
+              <Text style={[styles.mediumTitle, { marginVertical: 8 }]}>
+                {ExamSubgroup[subgroupName as keyof typeof ExamSubgroup] || subgroupName}
+              </Text>
 
-        {Object.entries(groupedExams).map(([subgroupName, exams]) => (
-          <View key={subgroupName}>
-            <Text style={[styles.mediumTitle, { marginVertical: 8 }]}>
-              {ExamSubgroup[subgroupName as keyof typeof ExamSubgroup] || subgroupName}
-            </Text>
+              {exams.map((exam, idx) => (
+                <View key={idx} wrap={false}>
+                  <View>
+                    <View style={{ ...styles.examValuesRow, alignItems: 'flex-end' }}>
+                      <View style={{ ...styles.examValuesColumn, alignItems: 'flex-start' }}>
+                        <Text style={{ ...styles.smallTitle, textAlign: 'left' }}>{exam.name}</Text>
+                      </View>
 
-            {exams.map((exam, idx) => (
-              <View key={idx} wrap={false}>
-                <View>
-                  <View style={{ ...styles.examValuesRow, alignItems: 'flex-end' }}>
-                    <View style={{ ...styles.examValuesColumn, alignItems: 'flex-start' }}>
-                      <Text style={{ ...styles.smallTitle, textAlign: 'left' }}>{exam.name}</Text>
-                    </View>
+                      <View style={styles.examValuesColumn}>
+                        <Text style={styles.description}>Valores Obtidos</Text>
+                        <Text style={styles.value}>
+                          {exam.relative_value !== null ? `${exam.relative_value} % | ` : ''}{' '}
+                          {exam?.value} {exam?.unit}
+                        </Text>
+                      </View>
 
-                    <View style={styles.examValuesColumn}>
-                      <Text style={styles.description}>Valores Obtidos</Text>
-                      <Text style={styles.value}>
-                        {exam.relative_value !== null ? `${exam.relative_value} % | ` : ''}{' '}
-                        {exam?.value} {exam?.unit}
-                      </Text>
-                    </View>
-
-                    <View style={styles.examValuesColumn}>
-                      <Text style={styles.description}>Valores de Referência</Text>
-                      <Text style={styles.value}>
-                        {exam.reference_relative_value !== null
-                          ? `${exam.reference_relative_value} % | `
-                          : ''}{' '}
-                        {exam?.reference_value} {exam?.unit}
-                      </Text>
+                      <View style={styles.examValuesColumn}>
+                        <Text style={styles.description}>Valores de Referência</Text>
+                        <Text style={styles.value}>
+                          {exam.reference_relative_value !== null
+                            ? `${exam.reference_relative_value} % | `
+                            : ''}{' '}
+                          {exam?.reference_value} {exam?.unit}
+                        </Text>
+                      </View>
                     </View>
                   </View>
+                  <View style={styles.line}></View>
                 </View>
-                <View style={styles.line}></View>
-              </View>
-            ))}
-          </View>
-        ))}
+              ))}
+            </View>
+          ))}
 
-        <ExamFooter />
+          {values.obs && values.obs !== '' && (
+            <View style={{ marginTop: 20 }}>
+              <Text style={{ ...styles.mediumTitle, marginBottom: 6 }}>Observações</Text>
+              <Text style={styles.description}>{values.obs}</Text>
+            </View>
+          )}
 
-        <ExamReferences type={ExamType.hemograma} />
+          <ExamFooter />
+
+          <ExamReferences type={ExamType.hemograma} />
+        </View>
       </Page>
     </Document>
   );
