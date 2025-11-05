@@ -29,6 +29,22 @@ const PDFFile = ({ values }: Props) => {
 
           <View style={styles.line}></View>
 
+          <View wrap={false}>
+            <View>
+              <View style={{ ...styles.examValuesRow, alignItems: 'flex-end' }}>
+                <View style={{ ...styles.examValuesColumn, alignItems: 'flex-start' }}></View>
+
+                <View style={styles.examValuesColumn}>
+                  <Text style={styles.description}>Valores Obtidos</Text>
+                </View>
+
+                <View style={styles.examValuesColumn}>
+                  <Text style={styles.description}>Valores de Referência</Text>
+                </View>
+              </View>
+            </View>
+            <View style={styles.line}></View>
+          </View>
           {values.exams.values
             .filter((v) => Boolean(v) && Boolean(v.value))
             .map((exam, idx) => (
@@ -49,14 +65,12 @@ const PDFFile = ({ values }: Props) => {
                     </View>
 
                     <View style={styles.examValuesColumn}>
-                      <Text style={styles.description}>Valores Obtidos</Text>
                       <Text style={styles.value}>
                         {exam?.value || '-'} {exam?.unit}
                       </Text>
                     </View>
 
                     <View style={styles.examValuesColumn}>
-                      <Text style={styles.description}>Valores de Referência</Text>
                       <Text style={styles.value}>
                         {exam?.reference_value} {exam?.unit}
                       </Text>

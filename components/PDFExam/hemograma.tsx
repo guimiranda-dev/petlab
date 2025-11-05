@@ -61,6 +61,22 @@ const PDFFile = ({ values }: Props) => {
                 {ExamSubgroup[subgroupName as keyof typeof ExamSubgroup] || subgroupName}
               </Text>
 
+              <View wrap={false}>
+                <View>
+                  <View style={{ ...styles.examValuesRow, alignItems: 'flex-end' }}>
+                    <View style={{ ...styles.examValuesColumn, alignItems: 'flex-start' }}></View>
+
+                    <View style={styles.examValuesColumn}>
+                      <Text style={styles.description}>Valores Obtidos</Text>
+                    </View>
+
+                    <View style={styles.examValuesColumn}>
+                      <Text style={styles.description}>Valores de Referência</Text>
+                    </View>
+                  </View>
+                </View>
+                <View style={styles.line}></View>
+              </View>
               {exams.map((exam, idx) => (
                 <View key={idx} wrap={false}>
                   <View>
@@ -70,7 +86,6 @@ const PDFFile = ({ values }: Props) => {
                       </View>
 
                       <View style={styles.examValuesColumn}>
-                        <Text style={styles.description}>Valores Obtidos</Text>
                         <Text style={styles.value}>
                           {exam.relative_value !== null && exam.relative_value
                             ? `${exam.relative_value} % | `
@@ -80,7 +95,6 @@ const PDFFile = ({ values }: Props) => {
                       </View>
 
                       <View style={styles.examValuesColumn}>
-                        <Text style={styles.description}>Valores de Referência</Text>
                         <Text style={styles.value}>
                           {exam.reference_relative_value !== null
                             ? `${exam.reference_relative_value} % | `
