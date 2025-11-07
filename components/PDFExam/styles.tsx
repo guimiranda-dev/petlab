@@ -24,17 +24,17 @@ export const styles = StyleSheet.create({
     width: '25%',
   },
   value: {
-    fontSize: 8,
+    fontSize: 6,
     fontWeight: 'bold',
   },
   title: {
-    fontSize: 10,
+    fontSize: 9,
     fontWeight: 'bold',
     textAlign: 'center',
     color: '#388d9b',
   },
   description: {
-    fontSize: 8,
+    fontSize: 6,
     marginBottom: 2,
   },
   references: {
@@ -57,11 +57,11 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
   smallTitle: {
-    fontSize: 8,
+    fontSize: 6,
   },
   header: {
     textAlign: 'right',
-    height: 110,
+    height: 70,
   },
   headerLine: {
     flexDirection: 'row',
@@ -76,27 +76,27 @@ export const styles = StyleSheet.create({
     justifyContent: 'flex-end',
     marginRight: 18,
     textAlign: 'right',
-    marginTop: 18,
+    marginTop: 16,
     gap: 2,
   },
   headerText: {
-    fontSize: 10,
+    fontSize: 8,
     textAlign: 'right',
     color: '#FFFFFF',
     justifyContent: 'flex-end',
   },
   logo: {
-    width: 120,
+    width: 100,
     position: 'absolute',
-    top: 48,
+    top: 20,
     left: 48,
   },
   signImage: {
-    width: 120,
+    width: 80,
   },
   signContainer: {
     alignItems: 'center',
     gap: 6,
-    marginTop: 48,
+    marginTop: 20,
   },
 });
