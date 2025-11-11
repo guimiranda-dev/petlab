@@ -6,15 +6,16 @@ import { ExamType } from '@/types/exam_types';
 export interface ExamsRequest {
   limit: number;
   currentPage: number;
-  keyword: string; // Owner name or Pet name
   type: ExamType | null;
   startDate: string | null;
   endDate: string | null;
+  owner?: string;
+  pet?: string;
 }
 
 async function getExams(props: ExamsRequest): Promise<{ data: ExamInterface[]; count: number }> {
   const supabase = createClient();
-  const { limit, currentPage, keyword, type, startDate, endDate } = props;
+  const { limit, currentPage, type, startDate, endDate, owner, pet } = props;
 
   const offset = (currentPage - 1) * limit;
 
@@ -49,11 +50,18 @@ async function getExams(props: ExamsRequest): Promise<{ data: ExamInterface[]; c
     query = query.lte('date', endDate);
   }
 
-  // Filtro por keyword (nome do dono ou pet)
-  if (keyword && keyword.trim() !== '') {
-    // query = query.or(`pet.name.ilike.${keyword}`);
-    // query = query.or(`pet.name.ilike.%${keyword}%`);
-    // query = query.or(`pet.name.ilike.%${keyword}%,pet.owner.name.ilike.%${keyword}%`);
+  // Filtro por owner ou pet
+  if (pet) {
+    query = query.eq('pet_id', pet);
+  } else if (owner) {
+    const { data: pets } = await supabase.from('pet').select('id').eq('owner_id', owner);
+
+    if (pets && pets.length > 0) {
+      query = query.in(
+        'pet_id',
+        pets.map((pet) => pet.id),
+      );
+    }
   }
 
   // Ordenação, paginação e execução

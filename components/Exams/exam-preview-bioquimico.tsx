@@ -27,7 +27,7 @@ export function ExamPreviewBioquimico({ values }: Props) {
   }, [debouncedValues]);
 
   return (
-    <div className='p-4 w-full'>
+    <div className='p-4 w-full h-full'>
       {instance.loading && (
         <div className='w-full h-full flex items-center justify-center bg-slate-100 absolute z-50 top-0'>
           <Spinner size='lg' />

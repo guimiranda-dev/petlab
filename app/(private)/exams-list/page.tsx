@@ -14,11 +14,12 @@ export default function Page() {
   const router = useRouter();
   const [searchProps, setSearchProps] = useState<ExamsRequest>({
     currentPage: 1,
-    keyword: '',
     limit: 20,
     type: null,
     endDate: null,
     startDate: null,
+    owner: undefined,
+    pet: undefined,
   });
 
   const { data, isFetching } = useExamsQueryHook(searchProps);

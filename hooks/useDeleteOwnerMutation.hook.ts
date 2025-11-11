@@ -40,7 +40,13 @@ const deleteOwner = async (ownerId: string) => {
       );
     }
 
-    const { error: deletePetsError } = await supabase.from('pets').delete().eq('owner_id', ownerId);
+    const { error: examError } = await supabase.from('exam').delete().in('pet_id', petIds);
+
+    if (examError) {
+      throw new Error(examError.message);
+    }
+
+    const { error: deletePetsError } = await supabase.from('pet').delete().eq('owner_id', ownerId);
 
     if (deletePetsError) {
       throw new Error(deletePetsError.message);

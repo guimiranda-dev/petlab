@@ -48,10 +48,10 @@ export function PetsSection({ ownerId }: PetsSectionProps) {
     });
   };
 
-  const onDeleteError = () => {
+  const onDeleteError = (e: Error) => {
     addToast({
       icon: <MdError className='text-white' />,
-      description: 'Erro ao deletar o pet!',
+      description: e?.message || 'Erro ao deletar o pet!',
       color: 'danger',
     });
   };

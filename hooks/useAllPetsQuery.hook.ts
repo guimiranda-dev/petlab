@@ -1,36 +1,39 @@
 'use client';
 
-import { isUdid } from '@/utils/isUdid';
+import { PetType } from '@/types/pet';
 import { createClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
-export interface OwnerRequest {
+export interface PetRequest {
   limit: number;
   currentPage: number;
   keyword?: string;
-}
-
-export interface OwnerResponse {
-  id: string;
-  name: string;
-  external_id: string;
+  owner?: string;
 }
 
 interface ResponseData {
-  data: OwnerResponse[];
-  count: number;
+  data: PetType[];
 }
 
-const getOwners = async ({ limit, currentPage, keyword }: OwnerRequest): Promise<ResponseData> => {
+const getPets = async ({
+  limit,
+  currentPage,
+  keyword,
+  owner,
+}: PetRequest): Promise<ResponseData> => {
   const supabase = createClient();
 
   let query;
 
-  query = supabase.from('owner').select('*', { count: 'estimated' });
+  query = supabase.from('pet').select('*');
 
   query
     .order('name', { ascending: true })
     .range((currentPage - 1) * limit, currentPage * limit - 1);
+
+  if (owner) {
+    query = query.eq('owner_id', owner);
+  }
 
   if (keyword && keyword !== '') {
     const fields = ['name'];
@@ -42,26 +45,21 @@ const getOwners = async ({ limit, currentPage, keyword }: OwnerRequest): Promise
       filter.push(`external_id.eq.${Number(keyword)}`);
     }
 
-    // Se for UUID, adiciona filtro por ID exato
-    if (isUdid(keyword)) {
-      filter.push(`id.eq.${keyword}`);
-    }
-
     query = query.or(filter.join(','));
   }
 
-  const { data, error, count } = await query.overrideTypes<OwnerResponse[]>();
+  const { data, error, count } = await query.overrideTypes<PetType[]>();
 
   if (error) {
     throw error;
   }
 
-  return { data, count: count || 1 };
+  return { data };
 };
 
-export function useOwnersQuery(props: OwnerRequest) {
+export function useAllPetsQuery(props: PetRequest) {
   return useQuery({
-    queryFn: () => getOwners(props),
-    queryKey: ['owners', props],
+    queryFn: () => getPets(props),
+    queryKey: ['all-pets', props],
   });
 }

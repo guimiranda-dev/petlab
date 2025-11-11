@@ -70,10 +70,10 @@ export function OwnerTableData({ page, setPage, totalPages, data, onEdit }: Prop
     });
   };
 
-  const onDeleteError = () => {
+  const onDeleteError = (e: Error) => {
     addToast({
       icon: <MdError className='text-white' />,
-      description: 'Erro ao deletar o tutor!',
+      description: e?.message || 'Erro ao deletar o tutor!',
       color: 'danger',
     });
   };

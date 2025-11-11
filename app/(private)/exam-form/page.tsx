@@ -142,7 +142,7 @@ function ExamFormContent() {
     <>
       <Header />
       <section className='container mx-auto max-w-[1800px] min-h-screen grid grid-cols-1 md:grid-cols-2 p-6 my-4 gap-6 bg-white rounded-md'>
-        <div className='flex flex-col gap-4'>
+        <div className='flex flex-col gap-4 overflow-auto h-[calc(100vh-150px)]'>
           <div className='mb-6'>
             <h1 className='text-3xl text-slate-800 mb-0 font-bold'>
               Formulário de criação de exame
@@ -226,8 +226,10 @@ function ExamFormContent() {
           )}
         </div>
 
-        {values.exams.type === ExamType.bioquimico && <ExamPreviewBioquimico values={values} />}
-        {values.exams.type === ExamType.hemograma && <ExamPreviewHemograma values={values} />}
+        <div className='overflow-auto h-[calc(100vh-150px)] p-2'>
+          {values.exams.type === ExamType.bioquimico && <ExamPreviewBioquimico values={values} />}
+          {values.exams.type === ExamType.hemograma && <ExamPreviewHemograma values={values} />}
+        </div>
       </section>
     </>
   );
