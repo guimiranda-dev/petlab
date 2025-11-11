@@ -59,6 +59,7 @@ async function getExams(props: ExamsRequest): Promise<{ data: ExamInterface[]; c
   // Ordenação, paginação e execução
   const { data, error, count } = await query
     .order('date', { ascending: false })
+    .order('created_at', { ascending: false })
     .range(offset, offset + limit - 1)
     .overrideTypes<ExamInterface[]>();
 

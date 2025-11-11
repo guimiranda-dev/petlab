@@ -7,8 +7,26 @@ interface Props {
   onSuccess: (e: OwnerType) => void;
 }
 
-const saveOwner = async (props: { name: string; external_id?: string }): Promise<OwnerType> => {
+const saveOwner = async (props: {
+  name: string;
+  external_id?: string;
+  id?: string;
+}): Promise<OwnerType> => {
   const supabase = createClient();
+
+  if (props.id) {
+    const { data, error: userError } = await supabase
+      .from('owner')
+      .update(props)
+      .eq('id', props.id)
+      .select()
+      .single();
+    if (userError) {
+      throw new Error(userError.message);
+    }
+
+    return data;
+  }
 
   const { data, error: userError } = await supabase.from('owner').insert(props).select().single();
 

@@ -7,16 +7,29 @@ interface Props {
   onSuccess: (e: PetType) => void;
 }
 
-const savePet = async (props: Omit<Partial<PetType>, 'id'>): Promise<PetType> => {
+const savePet = async (props: Partial<PetType>): Promise<PetType> => {
   const supabase = createClient();
 
-  const { data, error: userError } = await supabase.from('pet').insert(props).select().single();
+  if (props.id) {
+    const { data, error: userError } = await supabase
+      .from('pet')
+      .update(props)
+      .eq('id', props.id)
+      .select()
+      .single();
+    if (userError) {
+      throw new Error(userError.message);
+    }
 
-  if (userError) {
-    throw new Error(userError.message);
+    return data;
+  } else {
+    const { data, error: userError } = await supabase.from('pet').insert(props).select().single();
+    if (userError) {
+      throw new Error(userError.message);
+    }
+
+    return data;
   }
-
-  return data;
 };
 
 export function usePetMutation({ onSuccess, onError }: Props) {

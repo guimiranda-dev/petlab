@@ -4,7 +4,7 @@ import { isUdid } from '@/utils/isUdid';
 import { createClient } from '@/utils/supabase/client';
 import { useQuery } from '@tanstack/react-query';
 
-interface UserRequest {
+export interface OwnerRequest {
   limit: number;
   currentPage: number;
   keyword?: string;
@@ -18,14 +18,15 @@ interface OwnerResponse {
 
 interface ResponseData {
   data: OwnerResponse[];
+  count: number;
 }
 
-const getOwners = async ({ limit, currentPage, keyword }: UserRequest): Promise<ResponseData> => {
+const getOwners = async ({ limit, currentPage, keyword }: OwnerRequest): Promise<ResponseData> => {
   const supabase = createClient();
 
   let query;
 
-  query = supabase.from('owner').select('*');
+  query = supabase.from('owner').select('*', { count: 'estimated' });
 
   query
     .order('name', { ascending: true })
@@ -49,16 +50,16 @@ const getOwners = async ({ limit, currentPage, keyword }: UserRequest): Promise<
     query = query.or(filter.join(','));
   }
 
-  const { data, error } = await query.overrideTypes<OwnerResponse[]>();
+  const { data, error, count } = await query.overrideTypes<OwnerResponse[]>();
 
   if (error) {
     throw error;
   }
 
-  return { data };
+  return { data, count: count || 1 };
 };
 
-export function useOwnersQuery(props: UserRequest) {
+export function useOwnersQuery(props: OwnerRequest) {
   return useQuery({
     queryFn: () => getOwners(props),
     queryKey: ['owners', props],

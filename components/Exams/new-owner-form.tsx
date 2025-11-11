@@ -10,6 +10,7 @@ import { ownerValidationSchema } from '@/schemas/owner-validation.schema';
 import { addToast } from '@heroui/toast';
 import { useOwnerMutation } from '@/hooks/useOwnerMutation.hook';
 import { OwnerType } from '@/types/owner';
+import { useEffect } from 'react';
 
 interface InitialValuesProps {
   name: string;
@@ -24,9 +25,10 @@ const initialValues: InitialValuesProps = {
 interface Props {
   onClose: () => void;
   onSelect: (owner: OwnerType) => void;
+  owner?: OwnerType;
 }
 
-export function NewOwnerForm({ onClose, onSelect }: Props) {
+export function NewOwnerForm({ onClose, onSelect, owner }: Props) {
   const queryClient = useQueryClient();
 
   const onSuccess = async (e: OwnerType) => {
@@ -61,6 +63,7 @@ export function NewOwnerForm({ onClose, onSelect }: Props) {
     try {
       mutate({
         ...formData,
+        id: owner?.id,
       });
     } catch (error) {
       console.error('Erro: ', error);
@@ -74,6 +77,13 @@ export function NewOwnerForm({ onClose, onSelect }: Props) {
     validationSchema: ownerValidationSchema,
     validateOnBlur: true,
   });
+
+  useEffect(() => {
+    if (owner) {
+      setFieldValue('name', owner.name);
+      setFieldValue('external_id', owner.external_id);
+    }
+  }, [owner]);
 
   return (
     <Modal

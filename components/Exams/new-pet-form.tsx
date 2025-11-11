@@ -11,6 +11,7 @@ import { PetType } from '@/types/pet';
 import { usePetMutation } from '@/hooks/usePetMutation.hook';
 import { petValidationSchema } from '@/schemas/pet-validation.schema';
 import { Select, SelectItem } from '@heroui/select';
+import { useEffect } from 'react';
 
 const initialValues: Partial<PetType> = {
   name: '',
@@ -25,6 +26,7 @@ interface Props {
   onClose: () => void;
   owner_id: string;
   onSelect: (pet: PetType) => void;
+  pet?: PetType;
 }
 
 const speciesOptions = [
@@ -37,7 +39,7 @@ const genderOptions = [
   { value: 'Fêmea', label: 'Fêmea' },
 ];
 
-export function NewPetForm({ onClose, owner_id, onSelect }: Props) {
+export function NewPetForm({ onClose, owner_id, onSelect, pet }: Props) {
   const queryClient = useQueryClient();
 
   const onSuccess = async (e: PetType) => {
@@ -73,6 +75,7 @@ export function NewPetForm({ onClose, owner_id, onSelect }: Props) {
       mutate({
         ...formData,
         owner_id,
+        id: pet?.id,
       });
     } catch (error) {
       console.error('Erro: ', error);
@@ -86,6 +89,18 @@ export function NewPetForm({ onClose, owner_id, onSelect }: Props) {
     validationSchema: petValidationSchema,
     validateOnBlur: true,
   });
+
+  useEffect(() => {
+    if (pet) {
+      setFieldValue('name', pet.name);
+      setFieldValue('breed', pet.breed);
+      setFieldValue('specie', pet.specie);
+      setFieldValue('gender', pet.gender);
+      setFieldValue('birth_date', pet.birth_date);
+      setFieldValue('external_id', pet.external_id);
+      setFieldValue('id', pet.id);
+    }
+  }, [pet]);
 
   return (
     <Modal
