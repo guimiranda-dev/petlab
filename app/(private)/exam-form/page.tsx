@@ -215,15 +215,17 @@ function ExamFormContent() {
             value={values.obs}
           />
 
-          {isPending ? (
-            <div className='flex w-full items-center justify-center'>
-              <FaSpinner className='animate-spin text-foreground-500' />
-            </div>
-          ) : (
-            <Button type='button' color='primary' onPress={() => handleSubmit()}>
-              Salvar exame
-            </Button>
-          )}
+          <div className='w-full'>
+            {isPending ? (
+              <div className='flex w-full items-center justify-center'>
+                <FaSpinner className='animate-spin text-foreground-500' />
+              </div>
+            ) : (
+              <Button type='button' color='primary' onPress={() => handleSubmit()} fullWidth>
+                Salvar exame
+              </Button>
+            )}
+          </div>
         </div>
 
         <div className='overflow-auto h-[calc(100vh-150px)] p-2'>

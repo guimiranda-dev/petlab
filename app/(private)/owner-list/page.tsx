@@ -31,7 +31,7 @@ export default function Page() {
   return (
     <>
       <Header />
-      <section className='container mx-auto max-w-7xl p-6 bg-white my-4 rounded-md'>
+      <section className='container mx-auto max-w-7xl p-6 bg-white my-4 rounded-md overflow-auto min-h-[calc(100vh-150px)] h-[calc(100vh-150px)]'>
         <div className='flex items-center justify-between my-4'>
           <h1 className='text-3xl text-slate-800 mb-0 font-bold'>Tutores</h1>
           <Button color='primary' onPress={() => setShowNewOwnerModal(true)}>

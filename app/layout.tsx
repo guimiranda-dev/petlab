@@ -32,7 +32,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className={clsx('min-h-screen bg-background font-sans antialiased', fontSans.variable)}>
         <Providers themeProps={{ attribute: 'class', defaultTheme: 'light' }}>
           <div className='relative flex flex-col h-screen'>
-            <main>{children}</main>
+            <main className='overflow-hidden'>{children}</main>
           </div>
         </Providers>
       </body>
