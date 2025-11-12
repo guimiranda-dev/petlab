@@ -24,7 +24,7 @@ export const styles = StyleSheet.create({
     width: '25%',
   },
   value: {
-    fontSize: 6,
+    fontSize: 8,
     fontWeight: 'bold',
   },
   title: {
@@ -57,7 +57,7 @@ export const styles = StyleSheet.create({
     gap: 8,
   },
   smallTitle: {
-    fontSize: 6,
+    fontSize: 8,
   },
   header: {
     textAlign: 'right',
