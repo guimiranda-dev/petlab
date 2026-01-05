@@ -11,7 +11,11 @@ interface ResponseData {
 const getVets = async (): Promise<ResponseData> => {
   const supabase = createClient();
 
-  const { data, error } = await supabase.from('vet').select('*').overrideTypes<VetType[]>();
+  const { data, error } = await supabase
+    .from('vet')
+    .select('*')
+    .neq('is_deleted', true)
+    .overrideTypes<VetType[]>();
 
   if (error) {
     throw error;

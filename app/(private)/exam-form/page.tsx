@@ -20,7 +20,7 @@ import { ExamFormProps } from '@/types/exam';
 import { ExamPreviewBioquimico } from '@/components/Exams/exam-preview-bioquimico';
 import { ExamType } from '@/types/exam_types';
 import { ExamPreviewHemograma } from '@/components/Exams/exam-preview-hemograma';
-import { Suspense, useEffect } from 'react';
+import { Suspense, useEffect, useMemo } from 'react';
 import { useExamByIdQuery } from '@/hooks/useExamByIdQuery.hook';
 import { DateTime } from 'luxon';
 import { useQueryClient } from '@tanstack/react-query';
@@ -110,10 +110,18 @@ function ExamFormContent() {
       validateOnBlur: true,
     });
 
+  const vetsList = useMemo(() => {
+    const list = data?.data || [];
+    if (values.vet && !list.find((v) => String(v.id) === String(values.vet?.id))) {
+      return [values.vet, ...list];
+    }
+    return list;
+  }, [data?.data, values.vet]);
+
   const handleSelectVet = (value: string) => {
     setFieldValue('vet_id', value);
 
-    const selected = data?.data.find((i) => String(i.id) === String(value));
+    const selected = vetsList.find((i) => String(i.id) === String(value));
     if (selected) {
       setFieldValue('vet', selected);
     } else {
@@ -173,7 +181,7 @@ function ExamFormContent() {
               errorMessage={touched.vet_id && errors.vet_id ? errors.vet_id : ''}
               isInvalid={touched.vet_id && !!errors.vet_id}
               isRequired
-              items={data?.data || []}
+              items={vetsList}
               isLoading={isFetching}
             >
               {(option) => <SelectItem key={option.id}>{option.name}</SelectItem>}
