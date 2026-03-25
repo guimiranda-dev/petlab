@@ -15,6 +15,7 @@ const getVets = async (): Promise<ResponseData> => {
     .from('vet')
     .select('*')
     .neq('is_deleted', true)
+    .order('order', { ascending: true })
     .overrideTypes<VetType[]>();
 
   if (error) {

@@ -1,6 +1,6 @@
 import { Spinner } from '@heroui/spinner';
 import { usePDF } from '@react-pdf/renderer';
-import { useEffect, useState } from 'react';
+import { memo, useEffect, useState } from 'react';
 import PDFFile from '../PDFExam/bioquimico';
 import { ExamFormProps } from '@/types/exam';
 
@@ -8,23 +8,21 @@ interface Props {
   values: ExamFormProps;
 }
 
-export function ExamPreviewBioquimico({ values }: Props) {
-  const [debouncedValues, setDebouncedValues] = useState(values);
-  const [instance, updateInstance] = usePDF({
-    document: <PDFFile values={debouncedValues} />,
-  });
-
+function useDebouncedValue<T>(value: T, delay: number) {
+  const [debounced, setDebounced] = useState(value);
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedValues(values);
-    }, 500); // Aguarda 500ms após última mudança
-
+    const timer = setTimeout(() => setDebounced(value), delay);
     return () => clearTimeout(timer);
-  }, [values]);
+  }, [value, delay]);
+  return debounced;
+}
+
+const PdfBioquimicoView = memo(({ values }: Props) => {
+  const [instance, updateInstance] = usePDF();
 
   useEffect(() => {
-    updateInstance(<PDFFile values={debouncedValues} />);
-  }, [debouncedValues]);
+    updateInstance(<PDFFile values={values} />);
+  }, [values, updateInstance]);
 
   return (
     <div className='p-4 w-full h-full'>
@@ -43,4 +41,10 @@ export function ExamPreviewBioquimico({ values }: Props) {
       )}
     </div>
   );
+});
+PdfBioquimicoView.displayName = 'PdfBioquimicoView';
+
+export function ExamPreviewBioquimico({ values }: Props) {
+  const debouncedValues = useDebouncedValue(values, 3000);
+  return <PdfBioquimicoView values={debouncedValues} />;
 }

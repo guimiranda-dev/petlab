@@ -20,7 +20,7 @@ import { ExamFormProps } from '@/types/exam';
 import { ExamPreviewBioquimico } from '@/components/Exams/exam-preview-bioquimico';
 import { ExamType } from '@/types/exam_types';
 import { ExamPreviewHemograma } from '@/components/Exams/exam-preview-hemograma';
-import { Suspense, useEffect, useMemo } from 'react';
+import { Suspense, useDeferredValue, useEffect, useMemo } from 'react';
 import { useExamByIdQuery } from '@/hooks/useExamByIdQuery.hook';
 import { DateTime } from 'luxon';
 import { useQueryClient } from '@tanstack/react-query';
@@ -101,14 +101,16 @@ function ExamFormContent() {
     });
   };
 
-  const { values, setFieldValue, handleSubmit, errors, touched, setFieldTouched, status } =
-    useFormik({
-      initialValues,
-      enableReinitialize: true,
-      onSubmit: submit,
-      validationSchema: examValidationSchema,
-      validateOnBlur: true,
-    });
+  const { values, setFieldValue, handleSubmit, errors, touched, setFieldTouched } = useFormik({
+    initialValues,
+    enableReinitialize: true,
+    onSubmit: submit,
+    validationSchema: examValidationSchema,
+    validateOnChange: false,
+    validateOnBlur: true,
+  });
+
+  const deferredValues = useDeferredValue(values);
 
   const vetsList = useMemo(() => {
     const list = data?.data || [];
@@ -237,8 +239,12 @@ function ExamFormContent() {
         </div>
 
         <div className='overflow-auto h-[calc(100vh-150px)] p-2'>
-          {values.exams.type === ExamType.bioquimico && <ExamPreviewBioquimico values={values} />}
-          {values.exams.type === ExamType.hemograma && <ExamPreviewHemograma values={values} />}
+          {values.exams.type === ExamType.bioquimico && (
+            <ExamPreviewBioquimico values={deferredValues} />
+          )}
+          {values.exams.type === ExamType.hemograma && (
+            <ExamPreviewHemograma values={deferredValues} />
+          )}
         </div>
       </section>
     </>
