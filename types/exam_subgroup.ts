@@ -1,4 +1,4 @@
 export enum ExamSubgroup {
-  eritograma = 'Eritograma',
+  eritograma = 'Eritrograma',
   leucograma = 'Leucograma',
 }
