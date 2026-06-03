@@ -1,5 +1,5 @@
 'use client';
-import { useFormik } from 'formik';
+import { FormikHelpers, useFormik } from 'formik';
 import { Modal, ModalContent, ModalHeader, ModalBody, ModalFooter } from '@heroui/modal';
 import { useQueryClient } from '@tanstack/react-query';
 import { FaCircleCheck, FaSpinner } from 'react-icons/fa6';
@@ -11,6 +11,7 @@ import { addToast } from '@heroui/toast';
 import { useOwnerMutation } from '@/hooks/useOwnerMutation.hook';
 import { OwnerType } from '@/types/owner';
 import { useEffect } from 'react';
+import { checkOwnerExternalIdUnique } from '@/utils/owner/checkOwnerExternalIdUnique';
 
 interface InitialValuesProps {
   name: string;
@@ -59,18 +60,37 @@ export function NewOwnerForm({ onClose, onSelect, owner }: Props) {
 
   const { mutate, isPending } = useOwnerMutation({ onSuccess, onError });
 
-  function submit(formData: InitialValuesProps) {
+  async function submit(formData: InitialValuesProps, helpers: FormikHelpers<InitialValuesProps>) {
+    const externalId = formData.external_id.trim();
+
     try {
+      helpers.setFieldError('external_id', '');
+
+      const isUnique = await checkOwnerExternalIdUnique({
+        external_id: externalId,
+        ownerId: owner?.id,
+      });
+
+      if (!isUnique) {
+        helpers.setFieldError('external_id', 'Este código externo já está em uso');
+        return;
+      }
+
       mutate({
         ...formData,
+        external_id: externalId,
         id: owner?.id,
       });
     } catch (error) {
-      console.error('Erro: ', error);
+      addToast({
+        icon: <MdError className='text-white' />,
+        description: 'Erro ao validar o código externo!',
+        color: 'danger',
+      });
     }
   }
 
-  const { values, setFieldValue, handleSubmit, errors, touched } = useFormik({
+  const { values, setFieldValue, handleSubmit, errors, touched, submitCount } = useFormik({
     initialValues,
     enableReinitialize: true,
     onSubmit: submit,
@@ -119,10 +139,14 @@ export function NewOwnerForm({ onClose, onSelect, owner }: Props) {
             <div className='mb-6 grid grid-cols-1 md:grid-cols-2 gap-4'>
               <Input
                 fullWidth
-                label='Código externo (Opcional)'
+                label='Código externo'
                 onChange={(e) => setFieldValue('external_id', e.target.value)}
-                errorMessage={touched.external_id && errors.external_id ? errors.external_id : ''}
-                isInvalid={touched.external_id && !!errors.external_id}
+                errorMessage={
+                  (touched.external_id || submitCount > 0) && errors.external_id
+                    ? errors.external_id
+                    : ''
+                }
+                isInvalid={(touched.external_id || submitCount > 0) && !!errors.external_id}
                 value={values.external_id}
                 placeholder='Ex: 123456'
               />
