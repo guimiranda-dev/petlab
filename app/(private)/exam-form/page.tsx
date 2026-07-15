@@ -2,14 +2,12 @@
 
 import { Input, Textarea } from '@heroui/input';
 import { Divider } from '@heroui/divider';
-import { Select, SelectItem } from '@heroui/select';
 import { Header } from '@/components/header';
 import { OwnerFormData } from '@/components/Exams/owner-form-data';
 import { useFormik } from 'formik';
 import { examValidationSchema } from '@/schemas/exam-validation.schema';
 import { PetFormData } from '@/components/Exams/pet-form-data';
 import { Button } from '@heroui/button';
-import { useVetQuery } from '@/hooks/useVetQuery.hook';
 import { ExamTypeFormData } from '@/components/Exams/exam-type-form-data';
 import { addToast } from '@heroui/toast';
 import { FaCircleCheck, FaSpinner } from 'react-icons/fa6';
@@ -20,10 +18,11 @@ import { ExamFormProps } from '@/types/exam';
 import { ExamPreviewBioquimico } from '@/components/Exams/exam-preview-bioquimico';
 import { ExamType } from '@/types/exam_types';
 import { ExamPreviewHemograma } from '@/components/Exams/exam-preview-hemograma';
-import { Suspense, useDeferredValue, useEffect, useMemo } from 'react';
+import { Suspense, useDeferredValue, useEffect } from 'react';
 import { useExamByIdQuery } from '@/hooks/useExamByIdQuery.hook';
 import { DateTime } from 'luxon';
 import { useQueryClient } from '@tanstack/react-query';
+import { VetFormData } from '@/components/Exams/vet-form-data';
 
 const initialValues: ExamFormProps = {
   vet: null,
@@ -41,7 +40,6 @@ const initialValues: ExamFormProps = {
 };
 
 function ExamFormContent() {
-  const { data, isFetching } = useVetQuery();
   const router = useRouter();
   const params = useSearchParams();
 
@@ -112,25 +110,6 @@ function ExamFormContent() {
 
   const deferredValues = useDeferredValue(values);
 
-  const vetsList = useMemo(() => {
-    const list = data?.data || [];
-    if (values.vet && !list.find((v) => String(v.id) === String(values.vet?.id))) {
-      return [values.vet, ...list];
-    }
-    return list;
-  }, [data?.data, values.vet]);
-
-  const handleSelectVet = (value: string) => {
-    setFieldValue('vet_id', value);
-
-    const selected = vetsList.find((i) => String(i.id) === String(value));
-    if (selected) {
-      setFieldValue('vet', selected);
-    } else {
-      setFieldValue('vet', null);
-    }
-  };
-
   useEffect(() => {
     if (exam?.data) {
       setFieldValue('vet', exam.data.vet);
@@ -162,7 +141,7 @@ function ExamFormContent() {
             </h2>
           </div>
 
-          <div className='flex items-center justify-center gap-2'>
+          <div className='flex items-start justify-center gap-2'>
             <Input
               fullWidth
               type='date'
@@ -174,20 +153,13 @@ function ExamFormContent() {
               value={values.date}
               isRequired
             />
-            <Select
-              label='Veterinário'
-              placeholder='Selecione o veterinário'
-              selectedKeys={values.vet_id ? [values.vet_id] : []}
-              onChange={(e) => handleSelectVet(e.target.value)}
-              onBlur={() => setFieldTouched('vet_id', true)}
-              errorMessage={touched.vet_id && errors.vet_id ? errors.vet_id : ''}
-              isInvalid={touched.vet_id && !!errors.vet_id}
-              isRequired
-              items={vetsList}
-              isLoading={isFetching}
-            >
-              {(option) => <SelectItem key={option.id}>{option.name}</SelectItem>}
-            </Select>
+            <VetFormData
+              errors={errors}
+              setFieldValue={setFieldValue}
+              setFieldTouched={setFieldTouched}
+              touched={touched}
+              values={values}
+            />
           </div>
 
           <div className='flex items-center justify-center gap-2'>
