@@ -5,6 +5,7 @@ import { pdf } from '@react-pdf/renderer';
 import { DateTime } from 'luxon';
 import PDFHemograma from '../components/PDFExam/hemograma';
 import PDFBioquimico from '../components/PDFExam/bioquimico';
+import PDFCoproparasitologico from '../components/PDFExam/coproparasitologico';
 import { ExamType } from '@/types/exam_types';
 
 type ReferenceKey =
@@ -93,15 +94,31 @@ export async function generatePdf(examId: string) {
       },
     };
 
-    const blob = await (data.exam_type === ExamType.hemograma
-      ? pdf(<PDFHemograma values={PDFData} />).toBlob()
-      : pdf(<PDFBioquimico values={PDFData} />).toBlob());
+    const pdfByExamType = {
+      [ExamType.hemograma]: <PDFHemograma values={PDFData} />,
+      [ExamType.bioquimico]: <PDFBioquimico values={PDFData} />,
+      [ExamType.coproparasitologico]: <PDFCoproparasitologico values={PDFData} />,
+    };
+
+    const pdfDocument = pdfByExamType[data.exam_type as keyof typeof pdfByExamType];
+
+    if (!pdfDocument) {
+      throw new Error(`Tipo de exame sem template de PDF: ${data.exam_type}`);
+    }
+
+    const blob = await pdf(pdfDocument).toBlob();
 
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.href = url;
 
-    let name = data.exam_type === ExamType.hemograma ? 'H ' : 'B ';
+    const filePrefix = {
+      [ExamType.hemograma]: 'H ',
+      [ExamType.bioquimico]: 'B ',
+      [ExamType.coproparasitologico]: 'C ',
+    };
+
+    let name = filePrefix[data.exam_type as keyof typeof filePrefix];
     name += `${data.pet.name.toUpperCase()} - `;
     name += `${data.pet.owner.name.toUpperCase()} ${data.pet.owner?.external_id || ''}`;
     link.download = `${name}.pdf`;

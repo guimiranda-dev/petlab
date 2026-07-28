@@ -40,7 +40,7 @@ export function ExamReferences({ type }: { type: ExamType }) {
         TAYLOR, M. A.; COOP, R. L.; WALL, R. L. Veterinary Parasitology. 4th ed. Hoboken:
         Wiley-Blackwell, 2016. • FOREYT, W. J. Veterinary Parasitology Reference Manual. 6th ed.
         Ames: Iowa State University Press, 2013. • ZAJAC, A. M.; CONBOY, G. A. Veterinary Clinical
-        Parasitology. 9th ed. Ames: Wiley-Blackwell, 2012
+        Parasitology. 9th ed. Ames: Wiley-Blackwell, 2012.
       </Text>
     </View>
   );

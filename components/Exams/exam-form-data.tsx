@@ -94,16 +94,17 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
     const absoluteValue = values?.exams?.values?.[examId]?.reference_value;
     const relativeValue = values?.exams?.values?.[examId]?.reference_relative_value;
     const unit = values?.exams?.values?.[examId]?.unit;
+    const unitSuffix = unit ? ` ${unit}` : '';
 
     if (absoluteValue === null && relativeValue === null) {
       return 'N/A';
     }
 
     if (relativeValue !== null) {
-      return `${relativeValue} % | ${absoluteValue} ${unit}`;
+      return `${relativeValue} % | ${absoluteValue}${unitSuffix}`;
     }
 
-    return `${absoluteValue} ${unit}`;
+    return `${absoluteValue}${unitSuffix}`;
   };
 
   if (!data?.data || isFetching) return null;
@@ -153,9 +154,11 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
                         }}
                         value={values?.exams?.values?.[exam.id]?.value}
                         endContent={
-                          <span className='text-[10px] text-secondary-500'>
-                            {values?.exams?.values?.[exam.id]?.unit}
-                          </span>
+                          values?.exams?.values?.[exam.id]?.unit ? (
+                            <span className='text-[10px] text-secondary-500'>
+                              {values.exams.values[exam.id].unit}
+                            </span>
+                          ) : null
                         }
                       />
                     </div>

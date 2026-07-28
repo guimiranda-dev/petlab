@@ -18,6 +18,7 @@ import { ExamFormProps } from '@/types/exam';
 import { ExamPreviewBioquimico } from '@/components/Exams/exam-preview-bioquimico';
 import { ExamType } from '@/types/exam_types';
 import { ExamPreviewHemograma } from '@/components/Exams/exam-preview-hemograma';
+import { ExamPreviewCoproparasitologico } from '@/components/Exams/exam-preview-coproparasitologico';
 import { Suspense, useDeferredValue, useEffect } from 'react';
 import { useExamByIdQuery } from '@/hooks/useExamByIdQuery.hook';
 import { DateTime } from 'luxon';
@@ -216,6 +217,9 @@ function ExamFormContent() {
           )}
           {values.exams.type === ExamType.hemograma && (
             <ExamPreviewHemograma values={deferredValues} />
+          )}
+          {values.exams.type === ExamType.coproparasitologico && (
+            <ExamPreviewCoproparasitologico values={deferredValues} />
           )}
         </div>
       </section>
