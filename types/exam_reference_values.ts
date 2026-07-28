@@ -22,4 +22,5 @@ export interface ExamReferenceValues {
   sample_type: string;
   method: string;
   unit: string;
+  options?: string | null;
 }

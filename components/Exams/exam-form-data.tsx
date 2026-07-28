@@ -4,6 +4,7 @@ import { ExamReferenceValues } from '@/types/exam_reference_values';
 import { ExamSubgroup } from '@/types/exam_subgroup';
 import { ExamType } from '@/types/exam_types';
 import { Input } from '@heroui/input';
+import { Select, SelectItem } from '@heroui/select';
 import { verifyIfIsAdult } from '@/utils/verifyIfIsAdult';
 import { ExamInterface } from '@/types/exam';
 
@@ -30,6 +31,21 @@ function groupBySubgroup(data: ExamReferenceValues[]) {
   );
 
   return grouped;
+}
+
+function parseOptions(options?: string | null): string[] {
+  if (!options) return [];
+
+  try {
+    const parsedOptions: unknown = JSON.parse(options);
+
+    return Array.isArray(parsedOptions)
+      ? parsedOptions.filter((option): option is string => typeof option === 'string')
+      : [];
+  } catch (err) {
+    console.error(err);
+    return [];
+  }
 }
 
 export function ExamFormData({ examType, setFieldValue, values, examSaved }: Props) {
@@ -143,24 +159,47 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
                           : ''
                       }
                     >
-                      <Input
-                        classNames={{
-                          label: 'font-bold !text-secondary-500',
-                        }}
-                        label={exam.name}
-                        placeholder='Digite aqui'
-                        onChange={(e) => {
-                          setFieldValue(`exams.values.${exam.id}.value`, e.target.value);
-                        }}
-                        value={values?.exams?.values?.[exam.id]?.value}
-                        endContent={
-                          values?.exams?.values?.[exam.id]?.unit ? (
-                            <span className='text-[10px] text-secondary-500'>
-                              {values.exams.values[exam.id].unit}
-                            </span>
-                          ) : null
-                        }
-                      />
+                      {examType === ExamType.coproparasitologico && exam.options != null ? (
+                        <Select
+                          classNames={{
+                            label: 'font-bold !text-secondary-500',
+                          }}
+                          label={exam.name}
+                          placeholder='Selecione uma opção'
+                          selectedKeys={
+                            values?.exams?.values?.[exam.id]?.value
+                              ? [values.exams.values[exam.id].value]
+                              : []
+                          }
+                          onSelectionChange={(keys) => {
+                            const selectedValue = Array.from(keys)[0];
+                            setFieldValue(`exams.values.${exam.id}.value`, selectedValue || '');
+                          }}
+                        >
+                          {parseOptions(exam.options).map((option) => (
+                            <SelectItem key={option}>{option}</SelectItem>
+                          ))}
+                        </Select>
+                      ) : (
+                        <Input
+                          classNames={{
+                            label: 'font-bold !text-secondary-500',
+                          }}
+                          label={exam.name}
+                          placeholder='Digite aqui'
+                          onChange={(e) => {
+                            setFieldValue(`exams.values.${exam.id}.value`, e.target.value);
+                          }}
+                          value={values?.exams?.values?.[exam.id]?.value}
+                          endContent={
+                            values?.exams?.values?.[exam.id]?.unit ? (
+                              <span className='text-[10px] text-secondary-500'>
+                                {values.exams.values[exam.id].unit}
+                              </span>
+                            ) : null
+                          }
+                        />
+                      )}
                     </div>
                   </div>
                   <div className='col-span-2'>
