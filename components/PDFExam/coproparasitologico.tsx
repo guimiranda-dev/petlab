@@ -26,9 +26,9 @@ const PDFFile = ({ values }: Props) => {
           <Text style={styles.title}>{ExamTypeMap[ExamType.coproparasitologico].label}</Text>
           <View style={styles.line} />
           <Text style={{ ...styles.smallTitle, marginTop: 12 }}>
-            Método: Exame coproparasitológico realizado pelas técnicas de flutuação (Willis-Mollay),
-            com avaliação microscópica qualitativa para pesquisa de ovos, oocistos, cistos, larvas e
-            demais estruturas parasitárias.
+            Exame coproparasitológico realizado pela técnica de flutuação (Willis-Mollay), com
+            avaliação microscópica qualitativa para pesquisa de ovos, oocistos, cistos, larvas e
+            demais estruturas parasitárias
           </Text>
 
           <View wrap={false}>
