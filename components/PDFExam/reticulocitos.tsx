@@ -27,7 +27,7 @@ const PDFFile = ({ values }: Props) => {
           <View style={styles.line} />
 
           <Text style={{ ...styles.smallTitle, marginTop: 12 }}>Amostra: Sangue total</Text>
-          <Text style={styles.smallTitle}>
+          <Text style={{ ...styles.smallTitle, marginBottom: 12 }}>
             Método: Azul de cresil brilhante e contagem manual por microscopia.
           </Text>
 
@@ -46,34 +46,20 @@ const PDFFile = ({ values }: Props) => {
 
           {results.map((exam) => (
             <View key={exam.exam_reference_id} wrap={false}>
-              <View>
-                <Text style={[styles.mediumTitle, { marginVertical: 4 }]}>{exam.name}</Text>
-
-                <View style={styles.examValuesRow}>
-                  <View
-                    style={{
-                      ...styles.examValuesColumn,
-                      alignItems: 'flex-start',
-                      textAlign: 'left',
-                    }}
-                  >
-                    {exam.sample_type && (
-                      <Text style={styles.description}>Amostra: {exam.sample_type}</Text>
-                    )}
-                    {exam.method && <Text style={styles.description}>Método: {exam.method}</Text>}
-                  </View>
-                  <View style={styles.examValuesColumn}>
-                    <Text style={styles.value}>
-                      {exam.value}
-                      {exam.unit ? ` ${exam.unit}` : ''}
-                    </Text>
-                  </View>
-                  <View style={styles.examValuesColumn}>
-                    <Text style={styles.value}>
-                      {exam.reference_value || 'N/A'}
-                      {exam.reference_value && exam.unit ? ` ${exam.unit}` : ''}
-                    </Text>
-                  </View>
+              <View style={styles.examValuesRow}>
+                <View style={{ ...styles.examValuesColumn, alignItems: 'flex-start' }}>
+                  <Text style={styles.smallTitle}>{exam.name}</Text>
+                </View>
+                <View style={styles.examValuesColumn}>
+                  <Text style={styles.value}>
+                    {exam.value}
+                    {exam.unit ? ` ${exam.unit}` : ''}
+                  </Text>
+                </View>
+                <View style={styles.examValuesColumn}>
+                  <Text style={{ ...styles.value, lineHeight: 1.5 }}>
+                    {exam.reference_value || ''}
+                  </Text>
                 </View>
               </View>
               <View style={styles.line} />
