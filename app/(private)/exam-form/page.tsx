@@ -20,6 +20,7 @@ import { ExamType } from '@/types/exam_types';
 import { ExamPreviewHemograma } from '@/components/Exams/exam-preview-hemograma';
 import { ExamPreviewCoproparasitologico } from '@/components/Exams/exam-preview-coproparasitologico';
 import { ExamPreviewUrinalise } from '@/components/Exams/exam-preview-urinalise';
+import { ExamPreviewReticulocitos } from '@/components/Exams/exam-preview-reticulocitos';
 import { Suspense, useDeferredValue, useEffect } from 'react';
 import { useExamByIdQuery } from '@/hooks/useExamByIdQuery.hook';
 import { DateTime } from 'luxon';
@@ -224,6 +225,9 @@ function ExamFormContent() {
           )}
           {values.exams.type === ExamType.urinalise && (
             <ExamPreviewUrinalise values={deferredValues} />
+          )}
+          {values.exams.type === ExamType.reticulocitos && (
+            <ExamPreviewReticulocitos values={deferredValues} />
           )}
         </div>
       </section>

@@ -7,6 +7,7 @@ import PDFHemograma from '../components/PDFExam/hemograma';
 import PDFBioquimico from '../components/PDFExam/bioquimico';
 import PDFCoproparasitologico from '../components/PDFExam/coproparasitologico';
 import PDFUrinalise from '../components/PDFExam/urinalise';
+import PDFReticulocitos from '../components/PDFExam/reticulocitos';
 import { ExamType } from '@/types/exam_types';
 
 type ReferenceKey =
@@ -100,6 +101,7 @@ export async function generatePdf(examId: string) {
       [ExamType.bioquimico]: <PDFBioquimico values={PDFData} />,
       [ExamType.coproparasitologico]: <PDFCoproparasitologico values={PDFData} />,
       [ExamType.urinalise]: <PDFUrinalise values={PDFData} />,
+      [ExamType.reticulocitos]: <PDFReticulocitos values={PDFData} />,
     };
 
     const pdfDocument = pdfByExamType[data.exam_type as keyof typeof pdfByExamType];
@@ -119,6 +121,7 @@ export async function generatePdf(examId: string) {
       [ExamType.bioquimico]: 'B ',
       [ExamType.coproparasitologico]: 'C ',
       [ExamType.urinalise]: 'U ',
+      [ExamType.reticulocitos]: 'R ',
     };
 
     let name = filePrefix[data.exam_type as keyof typeof filePrefix];
