@@ -16,6 +16,15 @@ interface Props {
 function groupExamsBySubgroup(exams: ExamFormProps['exams']['values']) {
   return exams
     .filter((exam) => Boolean(exam) && exam.value !== null && exam.value !== undefined)
+    .sort((a, b) => {
+      const subgroupOrder = (a.exam_subgroup || 'Outros').localeCompare(
+        b.exam_subgroup || 'Outros',
+      );
+
+      return (
+        subgroupOrder || (a.order ?? Number.MAX_SAFE_INTEGER) - (b.order ?? Number.MAX_SAFE_INTEGER)
+      );
+    })
     .reduce<Record<string, ExamFormProps['exams']['values']>>((groups, exam) => {
       const subgroupName = exam.exam_subgroup || 'Outros';
 

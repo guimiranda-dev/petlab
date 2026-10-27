@@ -83,6 +83,7 @@ export async function generatePdf(examId: string) {
         type: data.exam_type,
         values: data.exam_values.map((i) => ({
           name: i.exam_reference_values.name,
+          order: i.exam_reference_values.order,
           exam_subgroup: i.exam_reference_values.exam_subgroup,
           method: i.exam_reference_values.method,
           sample_type: i.exam_reference_values.sample_type,

@@ -89,6 +89,7 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
         setFieldValue(`exams.values.${exam.id}.reference_relative_value`, valueRelative || null);
         setFieldValue(`exams.values.${exam.id}.unit`, exam.unit);
         setFieldValue(`exams.values.${exam.id}.exam_reference_id`, exam.id);
+        setFieldValue(`exams.values.${exam.id}.order`, exam.order);
         setFieldValue(`exams.values.${exam.id}.name`, exam.name);
         setFieldValue(`exams.values.${exam.id}.method`, exam.method);
         setFieldValue(`exams.values.${exam.id}.sample_type`, exam.sample_type);

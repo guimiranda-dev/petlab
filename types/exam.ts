@@ -38,6 +38,7 @@ export interface ExamFormProps {
     type: ExamType | null;
     values: {
       exam_reference_id: number;
+      order?: number | null;
       reference_value: string;
       reference_relative_value: string;
       exam_subgroup: ExamSubgroup;
