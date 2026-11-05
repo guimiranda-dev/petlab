@@ -26,7 +26,12 @@ const getPets = async ({ owner_id }: PetRequest): Promise<ResponseData> => {
     throw error;
   }
 
-  return { data };
+  return {
+    data: data.map((pet) => ({
+      ...pet,
+      name: pet.name.toLowerCase().replace(/(^|\s)\S/g, (letter) => letter.toUpperCase()),
+    })),
+  };
 };
 
 export function usePetsQuery(props: PetRequest) {

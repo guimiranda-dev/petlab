@@ -144,7 +144,7 @@ function ExamFormContent() {
             </h2>
           </div>
 
-          <div className='flex items-start justify-center gap-2'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
             <Input
               fullWidth
               type='date'
@@ -165,7 +165,7 @@ function ExamFormContent() {
             />
           </div>
 
-          <div className='flex items-center justify-center gap-2'>
+          <div className='grid grid-cols-1 md:grid-cols-2 gap-2'>
             <OwnerFormData
               errors={errors}
               setFieldValue={setFieldValue}

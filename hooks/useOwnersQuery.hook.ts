@@ -57,7 +57,13 @@ const getOwners = async ({ limit, currentPage, keyword }: OwnerRequest): Promise
     throw error;
   }
 
-  return { data, count: count || 1 };
+  return {
+    data: data.map((owner) => ({
+      ...owner,
+      name: owner.name.toLowerCase().replace(/(^|\s)\S/g, (letter) => letter.toUpperCase()),
+    })),
+    count: count || 1,
+  };
 };
 
 export function useOwnersQuery(props: OwnerRequest) {

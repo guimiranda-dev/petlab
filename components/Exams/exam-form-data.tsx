@@ -70,10 +70,12 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
       key_relative = `${isAdult ? 'adult' : 'puppy'}_`;
     }
 
-    if (values?.pet?.specie === 'Felino') {
+    const specie = values?.pet?.specie?.toLowerCase();
+
+    if (specie === 'felino' || specie === 'felina') {
       key_reference += 'cat_';
       key_relative += 'cat_';
-    } else if (values?.pet?.specie === 'Canino') {
+    } else if (specie === 'canino' || specie === 'canina') {
       key_reference += 'dog_';
       key_relative += 'dog_';
     }
@@ -144,7 +146,8 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
                     {values?.exams?.values?.[exam.id]?.reference_relative_value && (
                       <Input
                         classNames={{
-                          label: 'font-bold !text-secondary-500',
+                          label: 'font-bold !text-secondary-500 text-[10px] md:text-sm',
+                          input: 'text-xs md:text-sm',
                         }}
                         label={exam.name}
                         placeholder='Digite aqui'
@@ -188,7 +191,8 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
                       ) : (
                         <Input
                           classNames={{
-                            label: 'font-bold !text-secondary-500',
+                            label: 'font-bold !text-secondary-500 text-[10px] md:text-sm',
+                            input: 'text-xs md:text-sm',
                           }}
                           label={exam.name}
                           placeholder='Digite aqui'
@@ -214,6 +218,10 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
                       disabled
                       readOnly
                       value={handleReferenceValue(exam.id)}
+                      classNames={{
+                        label: 'text-[10px] md:text-sm',
+                        input: 'text-xs md:text-sm',
+                      }}
                     />
                   </div>
                 </div>
