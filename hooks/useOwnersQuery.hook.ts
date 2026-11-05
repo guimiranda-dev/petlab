@@ -29,6 +29,7 @@ const getOwners = async ({ limit, currentPage, keyword }: OwnerRequest): Promise
   query = supabase.from('owner').select('*', { count: 'estimated' });
 
   query
+    .is('deleted_at', null)
     .order('name', { ascending: true })
     .range((currentPage - 1) * limit, currentPage * limit - 1);
 

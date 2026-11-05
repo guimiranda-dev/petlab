@@ -19,6 +19,7 @@ const getPets = async ({ owner_id }: PetRequest): Promise<ResponseData> => {
     .from('pet')
     .select('*')
     .eq('owner_id', owner_id)
+    .is('deleted_at', null)
     .overrideTypes<PetType[]>();
 
   if (error) {
