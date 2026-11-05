@@ -1,7 +1,8 @@
 import { Select, SelectItem } from '@heroui/select';
 import { ExamFormData } from './exam-form-data';
 import { ExamType, ExamTypeMap } from '@/types/exam_types';
-import { ExamInterface } from '@/types/exam';
+import { ExamInterface, ExamFormProps } from '@/types/exam';
+import { ExamImageImport } from './exam-image-import';
 
 const exams = Object.entries(ExamTypeMap).map(([key, value]) => ({
   key: key as ExamType,
@@ -11,7 +12,7 @@ const exams = Object.entries(ExamTypeMap).map(([key, value]) => ({
 interface Props {
   setFieldValue: (field: string, value: any) => void;
   touched: { [key: string]: any };
-  values: { [key: string]: any };
+  values: ExamFormProps;
   errors: { [key: string]: any };
   examSaved: ExamInterface | null;
 }
@@ -35,6 +36,14 @@ export function ExamTypeFormData({ setFieldValue, values, errors, examSaved }: P
           ))}
         </Select>
       </div>
+
+      {values.exams.type === ExamType.hemograma && (
+        <ExamImageImport
+          key={`${examSaved?.id || 'new'}-${values.pet_id}-${values.exams.type}`}
+          values={values}
+          setFieldValue={setFieldValue}
+        />
+      )}
 
       {values.exams.type && (
         <ExamFormData

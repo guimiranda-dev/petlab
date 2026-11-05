@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useExamsReferenceValuesQuery } from '@/hooks/useExamsReferenceValuesQuery.hook';
 import { ExamReferenceValues } from '@/types/exam_reference_values';
 import { ExamSubgroup } from '@/types/exam_subgroup';
@@ -6,7 +6,7 @@ import { ExamType } from '@/types/exam_types';
 import { Input } from '@heroui/input';
 import { Select, SelectItem } from '@heroui/select';
 import { verifyIfIsAdult } from '@/utils/verifyIfIsAdult';
-import { ExamInterface } from '@/types/exam';
+import { ExamInterface, ExamFormProps } from '@/types/exam';
 
 interface Props {
   examType: ExamType;
@@ -50,6 +50,7 @@ function parseOptions(options?: string | null): string[] {
 
 export function ExamFormData({ examType, setFieldValue, values, examSaved }: Props) {
   const { data, isFetching } = useExamsReferenceValuesQuery(examType);
+  const initializedContext = useRef('');
 
   const groupedData = useMemo(() => {
     if (!data?.data) return {};
@@ -80,36 +81,37 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
     key_reference += 'reference';
     key_relative += 'reference_relative';
 
-    Object.entries(groupedData).forEach(([_, exams]) => {
-      exams.forEach((exam) => {
-        const value = (exam[key_reference as keyof ExamReferenceValues] as string) || null;
-        const valueRelative = (exam[key_relative as keyof ExamReferenceValues] as string) || null;
-
-        setFieldValue(`exams.values.${exam.id}.reference_value`, value || null);
-        setFieldValue(`exams.values.${exam.id}.reference_relative_value`, valueRelative || null);
-        setFieldValue(`exams.values.${exam.id}.unit`, exam.unit);
-        setFieldValue(`exams.values.${exam.id}.exam_reference_id`, exam.id);
-        setFieldValue(`exams.values.${exam.id}.order`, exam.order);
-        setFieldValue(`exams.values.${exam.id}.name`, exam.name);
-        setFieldValue(`exams.values.${exam.id}.method`, exam.method);
-        setFieldValue(`exams.values.${exam.id}.sample_type`, exam.sample_type);
-        setFieldValue(`exams.values.${exam.id}.exam_subgroup`, exam.exam_subgroup);
-
-        if (examSaved) {
-          const savedValues = examSaved.exam_values;
-          const savedValue = savedValues.find((value) => value.exam_reference_id === exam.id);
-          if (savedValue) {
-            setFieldValue(`exams.values.${exam.id}.value`, savedValue.value);
-            setFieldValue(`exams.values.${exam.id}.relative_value`, savedValue.relative);
-          }
-        }
-      });
+    const context = `${examSaved?.id || 'new'}-${values.pet_id}-${examType}`;
+    const sameContext = initializedContext.current === context;
+    const nextValues: ExamFormProps['exams']['values'] = [];
+    data.data.forEach((exam) => {
+      const previous = sameContext ? values.exams.values[exam.id] : undefined;
+      const saved =
+        !sameContext && examSaved?.pet_id === values.pet_id && examSaved?.exam_type === examType
+          ? examSaved.exam_values.find((item) => item.exam_reference_id === exam.id)
+          : undefined;
+      nextValues[exam.id] = {
+        ...previous,
+        reference_value: (exam[key_reference as keyof ExamReferenceValues] as string) || '',
+        reference_relative_value: (exam[key_relative as keyof ExamReferenceValues] as string) || '',
+        unit: exam.unit,
+        exam_reference_id: exam.id,
+        order: exam.order,
+        name: exam.name,
+        method: exam.method,
+        sample_type: exam.sample_type,
+        exam_subgroup: exam.exam_subgroup,
+        value: previous?.value ?? saved?.value ?? '',
+        relative_value: previous?.relative_value ?? saved?.relative ?? '',
+      };
     });
-  }, [data?.data, values.pet, examSaved]);
+    initializedContext.current = context;
+    setFieldValue('exams.values', nextValues);
+  }, [data?.data, values.pet, values.pet_id, examType, examSaved]);
 
   const handleReferenceValue = (examId: number) => {
-    const absoluteValue = values?.exams?.values?.[examId]?.reference_value;
-    const relativeValue = values?.exams?.values?.[examId]?.reference_relative_value;
+    const absoluteValue = values?.exams?.values?.[examId]?.reference_value || null;
+    const relativeValue = values?.exams?.values?.[examId]?.reference_relative_value || null;
     const unit = values?.exams?.values?.[examId]?.unit;
     const unitSuffix = unit ? ` ${unit}` : '';
 
@@ -150,7 +152,9 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
                           setFieldValue(`exams.values.${exam.id}.relative_value`, e.target.value);
                         }}
                         value={values?.exams?.values?.[exam.id]?.relative_value}
-                        endContent={<span className='text-[10px] text-secondary-500'>%</span>}
+                        endContent={
+                          <span className='text-[10px] text-secondary-500 text-nowrap'>%</span>
+                        }
                       />
                     )}
                     <div
@@ -194,7 +198,7 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
                           value={values?.exams?.values?.[exam.id]?.value}
                           endContent={
                             values?.exams?.values?.[exam.id]?.unit ? (
-                              <span className='text-[10px] text-secondary-500'>
+                              <span className='text-[10px] text-secondary-500 text-nowrap'>
                                 {values.exams.values[exam.id].unit}
                               </span>
                             ) : null

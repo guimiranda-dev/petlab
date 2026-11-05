@@ -33,6 +33,7 @@
     "@heroui/theme": "^2.4.23",
     "@heroui/toast": "^2.0.17",
     "@heroui/tooltip": "^2.2.23",
+    "@openrouter/sdk": "^1.5.45",
     "@react-aria/ssr": "3.9.7",
     "@react-aria/visually-hidden": "3.8.20",
     "@react-pdf/renderer": "^4.3.1",
