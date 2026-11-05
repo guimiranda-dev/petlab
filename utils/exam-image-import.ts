@@ -58,6 +58,11 @@ function numberFromText(raw: string | undefined): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
+/** Formata os resultados para os campos do formulário, com vírgula decimal. */
+export function formatImportedNumber(value: number): string {
+  return String(value).replace('.', ',');
+}
+
 export function processColumn(column: ImportedColumn): ProcessedColumn {
   const warnings = [...column.warnings];
   const readings = new Map(column.readings.map((reading) => [reading.field, reading.raw]));

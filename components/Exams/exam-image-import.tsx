@@ -5,6 +5,7 @@ import { Select, SelectItem } from '@heroui/select';
 import { ExamFormProps } from '@/types/exam';
 import {
   fieldForExamName,
+  formatImportedNumber,
   IMPORT_IMAGE_TYPES,
   MAX_IMPORT_BYTES,
   ProcessedColumn,
@@ -62,11 +63,14 @@ export function ExamImageImport({ values, setFieldValue }: Props) {
       if (matches.length !== 1) return;
       const item = matches[0];
       if (result.value !== null)
-        setFieldValue(`exams.values.${item.exam_reference_id}.value`, String(result.value));
+        setFieldValue(
+          `exams.values.${item.exam_reference_id}.value`,
+          formatImportedNumber(result.value),
+        );
       if (result.relative !== null)
         setFieldValue(
           `exams.values.${item.exam_reference_id}.relative_value`,
-          String(result.relative),
+          formatImportedNumber(result.relative),
         );
       count++;
     });
