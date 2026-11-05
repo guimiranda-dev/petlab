@@ -52,19 +52,21 @@ export async function generatePdf(examId: string) {
     let key_reference: ReferenceKey;
     let key_relative: RelativeKey;
 
+    const specie = data.pet.specie.toLowerCase();
+
     if (isAdult) {
-      if (data.pet.specie === 'Felino') {
+      if (specie === 'felino' || specie === 'felina') {
         key_reference = 'adult_cat_reference';
         key_relative = 'adult_cat_reference_relative';
-      } else if (data.pet.specie === 'Canino') {
+      } else if (specie === 'canino' || specie === 'canina') {
         key_reference = 'adult_dog_reference';
         key_relative = 'adult_dog_reference_relative';
       }
     } else {
-      if (data.pet.specie === 'Felino') {
+      if (specie === 'felino' || specie === 'felina') {
         key_reference = 'puppy_cat_reference';
         key_relative = 'puppy_cat_reference_relative';
-      } else if (data.pet.specie === 'Canino') {
+      } else if (specie === 'canino' || specie === 'canina') {
         key_reference = 'puppy_dog_reference';
         key_relative = 'puppy_dog_reference_relative';
       }
