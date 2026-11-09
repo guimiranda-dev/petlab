@@ -37,7 +37,7 @@ export function ExamTypeFormData({ setFieldValue, values, errors, examSaved }: P
         </Select>
       </div>
 
-      {values.exams.type === ExamType.hemograma && (
+      {values.exams.type && (
         <ExamImageImport
           key={`${examSaved?.id || 'new'}-${values.pet_id}-${values.exams.type}`}
           values={values}

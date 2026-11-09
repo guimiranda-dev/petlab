@@ -7,6 +7,7 @@ import { Input } from '@heroui/input';
 import { Select, SelectItem } from '@heroui/select';
 import { verifyIfIsAdult } from '@/utils/verifyIfIsAdult';
 import { ExamInterface, ExamFormProps } from '@/types/exam';
+import { getHemogramDefaultValue, hasExamValue } from '@/utils/hemograma';
 
 interface Props {
   examType: ExamType;
@@ -92,6 +93,14 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
         !sameContext && examSaved?.pet_id === values.pet_id && examSaved?.exam_type === examType
           ? examSaved.exam_values.find((item) => item.exam_reference_id === exam.id)
           : undefined;
+      const defaultValue =
+        examType === ExamType.hemograma ? getHemogramDefaultValue(exam.name) : '';
+      const initialValue = hasExamValue(saved?.value) ? saved!.value : defaultValue;
+      const initialRelative = hasExamValue(saved?.relative)
+        ? saved!.relative
+        : exam[key_relative as keyof ExamReferenceValues]
+          ? defaultValue
+          : '';
       nextValues[exam.id] = {
         ...previous,
         reference_value: (exam[key_reference as keyof ExamReferenceValues] as string) || '',
@@ -103,8 +112,8 @@ export function ExamFormData({ examType, setFieldValue, values, examSaved }: Pro
         method: exam.method,
         sample_type: exam.sample_type,
         exam_subgroup: exam.exam_subgroup,
-        value: previous?.value ?? saved?.value ?? '',
-        relative_value: previous?.relative_value ?? saved?.relative ?? '',
+        value: previous?.value ?? initialValue,
+        relative_value: previous?.relative_value ?? initialRelative,
       };
     });
     initializedContext.current = context;

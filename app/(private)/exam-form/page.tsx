@@ -77,13 +77,13 @@ function ExamFormContent() {
   const submit = (v: ExamFormProps) => {
     const examValues: ExamValuesRequest[] = [];
     v.exams.values.map((i) => {
-      if (i && i.value) {
-        // Valores vazios não serão salvos
+      if (i && (i.value || i.relative_value)) {
+        // Salva também resultados que possuem somente percentual.
         examValues.push({
           exam_id: 0,
           exam_reference_id: i.exam_reference_id,
           reference_value: i.reference_value,
-          value: i.value,
+          value: i.value || '',
           relative: i.relative_value,
         });
       }

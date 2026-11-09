@@ -22,7 +22,7 @@ export interface ImportedColumn {
   owner: string | null;
   observations: string | null;
   warnings: string[];
-  readings: { field: NotebookField; raw: string | null }[];
+  readings: { field: string; raw: string | null }[];
 }
 export interface ImportedResult {
   field: NotebookField;
@@ -30,8 +30,22 @@ export interface ImportedResult {
   value: number | null;
   relative: number | null;
 }
+export interface ImportTargetField {
+  id: number;
+  name: string;
+  unit: string;
+  relative: boolean;
+  options: string[];
+}
+export interface ImportedFieldResult {
+  field: string;
+  exam_reference_id: number;
+  raw: string | null;
+  value: string | null;
+  relative: string | null;
+}
 export interface ProcessedColumn extends ImportedColumn {
-  results: ImportedResult[];
+  results: (ImportedResult | ImportedFieldResult)[];
 }
 export const MAX_IMPORT_BYTES = 8 * 1024 * 1024;
 export const IMPORT_IMAGE_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -143,5 +157,83 @@ export function parseImportResponse(input: unknown): ProcessedColumn[] {
       throw new Error('A IA retornou dados inválidos. Tente outra imagem.');
     }
     return processColumn(column);
+  });
+}
+
+/** Importa os campos cadastrados dos demais exames, incluindo resultados qualitativos. */
+export function parseFieldImportResponse(
+  input: unknown,
+  fields: ImportTargetField[],
+): ProcessedColumn[] {
+  const data = input as { columns?: unknown[] };
+  if (!data || !Array.isArray(data.columns) || !data.columns.length || data.columns.length > 20) {
+    throw new Error('Não foi possível identificar as colunas na imagem.');
+  }
+  const targets = new Map(fields.map((field) => [String(field.id), field]));
+  const nullableText = (value: unknown): value is string | null =>
+    value === null || typeof value === 'string';
+  const formatValue = (value: string | null) => {
+    if (value === null) return null;
+    const text = value.trim();
+    if (!text) return null;
+    return /^[+-]?\d+\.\d+$/.test(text) ? text.replace('.', ',') : text;
+  };
+  const normalizeOption = (value: string) =>
+    value
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+
+  return data.columns.map((item) => {
+    const column = item as Omit<ImportedColumn, 'readings'> & {
+      readings: {
+        field: string;
+        raw: string | null;
+        value: string | null;
+        relative: string | null;
+      }[];
+    };
+    if (
+      !column ||
+      ![column.animal, column.owner, column.observations].every(nullableText) ||
+      !Array.isArray(column.warnings) ||
+      !column.warnings.every((warning) => typeof warning === 'string') ||
+      !Array.isArray(column.readings) ||
+      column.readings.length > fields.length ||
+      !column.readings.every(
+        (reading) =>
+          reading &&
+          typeof reading.field === 'string' &&
+          targets.has(reading.field) &&
+          nullableText(reading.raw) &&
+          nullableText(reading.value) &&
+          nullableText(reading.relative),
+      ) ||
+      new Set(column.readings.map((reading) => reading.field)).size !== column.readings.length
+    ) {
+      throw new Error('A IA retornou dados inválidos. Tente outra imagem.');
+    }
+    const warnings = [...column.warnings];
+    const results = column.readings.map((reading): ImportedFieldResult => {
+      const target = targets.get(reading.field)!;
+      let value = reading.raw === null ? null : formatValue(reading.value);
+      if (value !== null && target.options.length) {
+        const matches = target.options.filter(
+          (option) => normalizeOption(option) === normalizeOption(value!),
+        );
+        value = matches.length === 1 ? matches[0] : null;
+        if (value === null)
+          warnings.push(`${target.name}: resultado sem opção correspondente no cadastro.`);
+      }
+      return {
+        field: reading.field,
+        exam_reference_id: target.id,
+        raw: reading.raw,
+        value,
+        relative: reading.raw !== null && target.relative ? formatValue(reading.relative) : null,
+      };
+    });
+    return { ...column, warnings, results };
   });
 }

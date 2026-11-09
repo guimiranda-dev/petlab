@@ -8,6 +8,7 @@ import { ExamFooter } from './footer';
 import { styles } from './styles';
 import { ExamSubgroup } from '@/types/exam_subgroup';
 import { ExamReferences } from './examReferences';
+import { hasExamValue } from '@/utils/hemograma';
 
 interface Props {
   values: ExamFormProps;
@@ -15,7 +16,7 @@ interface Props {
 
 function groupExamsBySubgroup(exams: ExamFormProps['exams']['values']) {
   const grouped = exams
-    .filter((exam) => Boolean(exam) && exam.value !== null && exam.value !== undefined)
+    .filter((exam) => exam && (hasExamValue(exam.value) || hasExamValue(exam.relative_value)))
     .reduce(
       (acc, exam) => {
         const subgroupName = exam.exam_subgroup || 'Outros';
@@ -27,7 +28,7 @@ function groupExamsBySubgroup(exams: ExamFormProps['exams']['values']) {
         acc[subgroupName].push(exam);
         return acc;
       },
-      {} as Record<string, any[]>,
+      {} as Record<string, ExamFormProps['exams']['values']>,
     );
 
   return grouped;
@@ -87,16 +88,17 @@ const PDFFile = ({ values }: Props) => {
 
                       <View style={styles.examValuesColumn}>
                         <Text style={styles.value}>
-                          {exam.relative_value !== null && exam.relative_value
-                            ? `${exam.relative_value} % | `
-                            : ''}{' '}
-                          {exam?.value} {exam?.unit}
+                          {hasExamValue(exam.relative_value) ? `${exam.relative_value} %` : ''}
+                          {hasExamValue(exam.relative_value) && hasExamValue(exam.value)
+                            ? ' | '
+                            : ''}
+                          {hasExamValue(exam.value) ? `${exam.value} ${exam.unit || ''}` : ''}
                         </Text>
                       </View>
 
                       <View style={styles.examValuesColumn}>
                         <Text style={styles.value}>
-                          {exam.reference_relative_value !== null
+                          {hasExamValue(exam.reference_relative_value)
                             ? `${exam.reference_relative_value} % | `
                             : ''}{' '}
                           {exam?.reference_value} {exam?.unit}

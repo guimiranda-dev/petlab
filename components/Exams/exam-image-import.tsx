@@ -36,6 +36,7 @@ export function ExamImageImport({ values, setFieldValue }: Props) {
     try {
       const body = new FormData();
       body.append('image', file);
+      body.append('examType', values.exams.type || '');
       const response = await fetch('/api/exams/import-image', { method: 'POST', body });
       if (!response.headers.get('content-type')?.includes('application/json'))
         throw new Error(
@@ -58,25 +59,30 @@ export function ExamImageImport({ values, setFieldValue }: Props) {
       if (result.value === null && result.relative === null) return;
       const matches = values.exams.values.filter(
         (item) =>
-          item && typeof item.name === 'string' && fieldForExamName(item.name) === result.field,
+          item &&
+          ('exam_reference_id' in result
+            ? item.exam_reference_id === result.exam_reference_id
+            : typeof item.name === 'string' && fieldForExamName(item.name) === result.field),
       );
       if (matches.length !== 1) return;
       const item = matches[0];
       if (result.value !== null)
         setFieldValue(
           `exams.values.${item.exam_reference_id}.value`,
-          formatImportedNumber(result.value),
+          typeof result.value === 'number' ? formatImportedNumber(result.value) : result.value,
         );
       if (result.relative !== null)
         setFieldValue(
           `exams.values.${item.exam_reference_id}.relative_value`,
-          formatImportedNumber(result.relative),
+          typeof result.relative === 'number'
+            ? formatImportedNumber(result.relative)
+            : result.relative,
         );
       count++;
     });
     if (!count) {
       setError(
-        'Nenhum campo correspondente disponível. Aguarde os campos do hemograma ou confira o cadastro dos valores de referência.',
+        'Nenhum campo correspondente disponível. Aguarde os campos do exame ou confira o cadastro dos valores de referência.',
       );
       return;
     }
