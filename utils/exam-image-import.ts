@@ -72,9 +72,18 @@ function numberFromText(raw: string | undefined): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
-/** Formata os resultados para os campos do formulário, com vírgula decimal. */
-export function formatImportedNumber(value: number): string {
-  return String(value).replace('.', ',');
+const importedNumberFormatter = new Intl.NumberFormat('pt-BR', { maximumFractionDigits: 20 });
+
+/** Formata números importados sem arredondar a precisão textual retornada pela IA. */
+export function formatImportedNumber(value: number | string): string {
+  if (typeof value === 'number') return importedNumberFormatter.format(value);
+
+  // Strings mantêm as casas decimais (inclusive zeros finais) e resultados qualitativos.
+  const match = /^([+-]?)(\d+)(?:[.,](\d+))?$/.exec(value);
+  if (!match) return value;
+  const [, sign, integer, fraction] = match;
+  const grouped = integer.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return `${sign}${grouped}${fraction === undefined ? '' : `,${fraction}`}`;
 }
 
 export function processColumn(column: ImportedColumn): ProcessedColumn {
@@ -226,12 +235,14 @@ export function parseFieldImportResponse(
         if (value === null)
           warnings.push(`${target.name}: resultado sem opção correspondente no cadastro.`);
       }
+      const relative =
+        reading.raw !== null && target.relative ? formatValue(reading.relative) : null;
       return {
         field: reading.field,
         exam_reference_id: target.id,
         raw: reading.raw,
-        value,
-        relative: reading.raw !== null && target.relative ? formatValue(reading.relative) : null,
+        value: value !== null && !target.options.length ? formatImportedNumber(value) : value,
+        relative: relative === null ? null : formatImportedNumber(relative),
       };
     });
     return { ...column, warnings, results };

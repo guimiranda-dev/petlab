@@ -31,12 +31,6 @@ retorna 503; sessão inválida, 401; exame inexistente, excluído ou invisível 
 404; dados recusados, 422. Há tratamento de conflito (409), limite (429), falha do
 serviço (502) e timeout de 60 segundos (504). Não é salvo um histórico local de envios.
 
-Para rodar os testes locais (sem enviar dados reais):
-
-```sh
-node --test tests/exam-upload.test.cjs
-```
-
 ## Compatibilidade de renderização
 
 A rota fica em `pages/api/exams/[id]/upload.ts` para usar o React 18 instalado
