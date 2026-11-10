@@ -48,7 +48,7 @@ function ExamFormContent() {
 
   const queryClient = useQueryClient();
 
-  const id = params.get('id');
+  const id = params?.get('id') ?? null;
 
   const { data: exam } = useExamByIdQuery(id);
 

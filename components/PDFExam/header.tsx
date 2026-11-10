@@ -1,8 +1,9 @@
 /* eslint-disable jsx-a11y/alt-text */
 import { Image, Text, View } from '@react-pdf/renderer';
+import { PDFAssets } from './assets';
 import { styles } from './styles';
 
-export function ExamHeader() {
+export function ExamHeader({ assets }: { assets?: PDFAssets }) {
   return (
     <View style={{ marginTop: -24 }}>
       <Image
@@ -12,9 +13,9 @@ export function ExamHeader() {
           top: 0,
           left: 0,
         }}
-        src='/assets/pdf-header.png'
+        src={assets?.header ?? '/assets/pdf-header.png'}
       />
-      <Image style={styles.logo} src='/assets/mini-logo-pdf.png' />
+      <Image style={styles.logo} src={assets?.logo ?? '/assets/mini-logo-pdf.png'} />
       <View style={styles.header}>
         <View style={styles.headerInfo}>
           <Text style={{ ...styles.headerText, fontWeight: 'bold' }}>

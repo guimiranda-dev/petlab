@@ -1,3 +1,4 @@
+import { PDFAssets } from './assets';
 import React from 'react';
 import { Page, Text, View, Document } from '@react-pdf/renderer';
 import { ExamFormProps } from '@/types/exam';
@@ -12,6 +13,7 @@ import { hasExamValue } from '@/utils/hemograma';
 
 interface Props {
   values: ExamFormProps;
+  assets?: PDFAssets;
 }
 
 function groupExamsBySubgroup(exams: ExamFormProps['exams']['values']) {
@@ -34,13 +36,13 @@ function groupExamsBySubgroup(exams: ExamFormProps['exams']['values']) {
   return grouped;
 }
 
-const PDFFile = ({ values }: Props) => {
+const PDFFile = ({ values, assets }: Props) => {
   const groupedExams = groupExamsBySubgroup(values.exams.values);
 
   return (
     <Document>
       <Page style={{ paddingVertical: 24 }}>
-        <ExamHeader />
+        <ExamHeader assets={assets} />
         <View style={styles.body}>
           <ExamInfo values={values} />
 
@@ -112,14 +114,14 @@ const PDFFile = ({ values }: Props) => {
             </View>
           ))}
 
-          {values.obs && values.obs !== '' && (
+          {Boolean(values.obs) && (
             <View style={{ marginTop: 20 }}>
               <Text style={{ ...styles.mediumTitle, marginBottom: 6 }}>Observações</Text>
               <Text style={styles.description}>{values.obs}</Text>
             </View>
           )}
 
-          <ExamFooter />
+          <ExamFooter assets={assets} />
 
           <ExamReferences type={ExamType.hemograma} />
         </View>

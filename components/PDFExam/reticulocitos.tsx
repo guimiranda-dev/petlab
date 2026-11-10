@@ -1,3 +1,4 @@
+import { PDFAssets } from './assets';
 import React from 'react';
 import { Document, Page, Text, View } from '@react-pdf/renderer';
 import { ExamFormProps } from '@/types/exam';
@@ -10,15 +11,16 @@ import { ExamReferences } from './examReferences';
 
 interface Props {
   values: ExamFormProps;
+  assets?: PDFAssets;
 }
 
-const PDFFile = ({ values }: Props) => {
+const PDFFile = ({ values, assets }: Props) => {
   const results = values.exams.values.filter((exam) => Boolean(exam) && Boolean(exam.value));
 
   return (
     <Document>
       <Page style={{ paddingVertical: 24 }}>
-        <ExamHeader />
+        <ExamHeader assets={assets} />
         <View style={styles.body}>
           <ExamInfo values={values} />
 
@@ -66,14 +68,14 @@ const PDFFile = ({ values }: Props) => {
             </View>
           ))}
 
-          {values.obs && (
+          {Boolean(values.obs) && (
             <View style={{ marginTop: 20 }}>
               <Text style={{ ...styles.mediumTitle, marginBottom: 6 }}>Observações</Text>
               <Text style={styles.description}>{values.obs}</Text>
             </View>
           )}
 
-          <ExamFooter />
+          <ExamFooter assets={assets} />
           <ExamReferences type={ExamType.reticulocitos} />
         </View>
       </Page>

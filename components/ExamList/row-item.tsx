@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { Key } from 'react';
 import { AiFillDelete, AiFillEdit, AiFillFilePdf } from 'react-icons/ai';
 import { MdCheck, MdError } from 'react-icons/md';
+import { UploadExamButton } from './upload-exam-button';
 
 interface Props {
   exam: ExamInterface;
@@ -70,6 +71,7 @@ export function RowItem({ exam, columnKey, handleDelete, isPendingDelete }: Prop
     default:
       return (
         <div className='relative flex items-center justify-center gap-6'>
+          <UploadExamButton exam={exam} />
           <Tooltip content='Gerar PDF'>
             <button
               className='text-lg text-default-400 cursor-pointer active:opacity-50'
